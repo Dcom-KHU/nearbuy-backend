@@ -1,4 +1,4 @@
-package dcom.nearbuybackend;
+package dcom.nearbuybackend.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
