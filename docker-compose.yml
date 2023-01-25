@@ -1,0 +1,18 @@
+version: '0.0.1'
+services:
+  mysql:
+    container_name: nearbuy_mysql
+    image: mysql:8.0.32
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_USERNAME: root
+      MYSQL_ROOT_PASSWORD:
+  mongodb:
+    container_name: nearbuy_mongodb
+    image: mongo:6.0.1
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=
