@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
-      #username: root
-      #password:
-      uri: mongodb://localhost:27017/nearbuy
-      #authentication-database: admin
+      database: nearbuy
+      username: admin
+      password:
+      authentication-database: admin
