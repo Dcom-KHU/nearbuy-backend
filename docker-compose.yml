@@ -3,11 +3,9 @@ services:
   mysql:
     container_name: nearbuy_mysql
     image: mysql:8.0.32
-    command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: nearbuy
       MYSQL_ROOT_USERNAME: root
       MYSQL_ROOT_PASSWORD:
   mongodb:
@@ -16,6 +14,5 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_DATABASE=nearbuy
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=
