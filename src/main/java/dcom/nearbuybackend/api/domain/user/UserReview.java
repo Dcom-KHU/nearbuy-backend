@@ -1,4 +1,4 @@
-package dcom.nearbuybackend.api.domain.post;
+package dcom.nearbuybackend.api.domain.user;
 
 import lombok.*;
 
@@ -10,19 +10,30 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportPost {
+public class UserReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Post post;
+    private User user;
 
     @Column
-    private String type;
+    private String emotion;
+
+    @Column
+    private Boolean reply;
+
+    @Column
+    private Boolean location;
+
+    @Column
+    private Boolean time;
+
+    @Column
+    private Boolean manner;
 
     @Column
     private String detail;
 }
-
