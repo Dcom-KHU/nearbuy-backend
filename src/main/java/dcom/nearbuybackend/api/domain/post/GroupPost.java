@@ -15,7 +15,10 @@ public class GroupPost extends Post {
     @Column
     private Integer groupPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private GroupPostPeople groupPostPeople;
+    @Column
+    private String distribute;
+
+    @Column
+    private String day;
 }
 
