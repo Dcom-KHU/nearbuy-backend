@@ -19,6 +19,6 @@ public class GroupPost extends Post {
     private String distribute;
 
     @Column
-    private String day;
+    private Long day;
 }
 
