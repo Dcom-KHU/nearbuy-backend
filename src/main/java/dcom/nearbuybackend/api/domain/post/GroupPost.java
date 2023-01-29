@@ -16,6 +16,9 @@ public class GroupPost extends Post {
     private Integer groupPrice;
 
     @Column
+    private Integer total;
+
+    @Column
     private String distribute;
 
     @Column
