@@ -13,11 +13,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Api(tags = {"User Controller"})
 @RestController
@@ -60,5 +60,11 @@ public class UserController {
         }
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"존재하지 않는 아이디 입니다.");
+    }
+
+    @ApiOperation("소셜 로그인")
+    @GetMapping("/login/social")
+    public void socialLoginUser(HttpServletResponse httpServletResponse, @RequestParam String platform) throws IOException {
+        httpServletResponse.sendRedirect("http://localhost:8080/oauth2/authorization/"+ platform);
     }
 }

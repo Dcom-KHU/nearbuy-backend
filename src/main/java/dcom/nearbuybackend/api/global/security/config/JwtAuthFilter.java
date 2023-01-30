@@ -41,6 +41,6 @@ public class JwtAuthFilter extends GenericFilterBean {
     // Token에서 역할(권한)을 빼서 Security User 객체를 만들어 Authentication 객체 반환
     public Authentication getAuthentication(User user) {
         return new UsernamePasswordAuthenticationToken(user, "",
-                Arrays.asList(new SimpleGrantedAuthority("USER")));
+                Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 }

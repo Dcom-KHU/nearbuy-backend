@@ -30,6 +30,6 @@ public class User {
     @Column
     private String location;
 
-    @Column
+    @Column(length = 1024)
     private String refreshToken;
 }

@@ -12,6 +12,7 @@ spring:
           client-authentication-method: POST
           scope:
             - profile_nickname
+            - account_email
         naver:
           client-name: naver
           client-id: {CLIENT_ID}
@@ -20,6 +21,7 @@ spring:
           authorization-grant-type: authorization_code
           scope:
             - name
+            - email
       # Provider 설정
       provider:
         kakao:
