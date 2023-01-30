@@ -3,7 +3,6 @@ package dcom.nearbuybackend.api.domain.user.service;
 import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.domain.user.dto.UserRequestDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
-import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

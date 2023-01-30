@@ -1,6 +1,5 @@
 package dcom.nearbuybackend.api.domain.user.controller;
 
-import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.domain.user.dto.UserRequestDto;
 import dcom.nearbuybackend.api.domain.user.dto.UserResponseDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
@@ -20,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
-@Api(tags = {"UserController"})
+@Api(tags = {"User Controller"})
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -45,10 +42,10 @@ public class UserController {
 
         if (userService.loginUser(data)) {
 
-            Token token = tokenService.generateToken(data.getId());
+            Token token = tokenService.generateToken(data.getId(),"USER");
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", token.getRefreshToken())
-                    .maxAge(30 * 24 * 60 * 60) // refresh
+                    .maxAge(30 * 24 * 60 * 60) // 만료 기한
                     .path("/")
                     .secure(true)
                     .httpOnly(true)

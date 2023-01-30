@@ -1,0 +1,3 @@
+#Jwt Secret Key
+jwt:
+  secretKey: {SECRET_KEY}
