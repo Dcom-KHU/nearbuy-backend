@@ -53,6 +53,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 User.builder()
                         .id(email)
                         .name((String) oAuth2User.getAttribute("name"))
+                        .social(true)
                         .refreshToken(refreshTokenCookie.toString())
                         .build()
         ));

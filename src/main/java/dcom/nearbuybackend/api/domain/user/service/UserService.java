@@ -30,6 +30,7 @@ public class UserService {
                     .name(data.getName())
                     .password(data.getPassword())
                     .mannerPoint(36.5)
+                    .social(false)
                     .build();
 
             userRepository.save(user);
