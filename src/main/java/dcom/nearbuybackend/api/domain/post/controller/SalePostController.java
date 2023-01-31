@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Api(tags = {"Sale Post Controller"})
 @RestController
 @RequestMapping("/api/post/sale")
@@ -26,16 +28,16 @@ public class SalePostController {
 
     @ApiOperation("판매 게시글 등록")
     @PostMapping
-    public ResponseEntity<Void> registerSalePost(@RequestBody SalePostRequestDto.SalePostRegister post) {
-        salePostService.registerSalePost(post);
+    public ResponseEntity<Void> registerSalePost(HttpServletRequest httpServletRequest, @RequestBody SalePostRequestDto.SalePostRegister post) {
+        salePostService.registerSalePost(httpServletRequest, post);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation("판매 게시글 수정")
     @PatchMapping
-    public ResponseEntity<Void> modifySalePost(@RequestParam Integer id, @RequestBody SalePostRequestDto.SalePostModify post) {
-        salePostService.modifySalePost(id, post);
+    public ResponseEntity<Void> modifySalePost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestBody SalePostRequestDto.SalePostModify post) {
+        salePostService.modifySalePost(httpServletRequest, id, post);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
