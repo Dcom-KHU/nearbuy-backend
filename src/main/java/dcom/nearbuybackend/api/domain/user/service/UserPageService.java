@@ -1,8 +1,8 @@
 package dcom.nearbuybackend.api.domain.user.service;
 
 import dcom.nearbuybackend.api.domain.user.User;
-import dcom.nearbuybackend.api.domain.user.dto.UserRequestDto;
-import dcom.nearbuybackend.api.domain.user.dto.UserResponseDto;
+import dcom.nearbuybackend.api.domain.user.dto.UserPageRequestDto;
+import dcom.nearbuybackend.api.domain.user.dto.UserPageResponseDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -14,22 +14,22 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserPageService {
 
     private final UserRepository userRepository;
 
     private final TokenService tokenService;
 
     // 유저 페이지 조회
-    public UserResponseDto.UserPageInfo getUserPage(String id) {
+    public UserPageResponseDto.UserPageInfo getUserPage(String id) {
         User user = userRepository.findById(id).orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 유저가 없습니다."));
 
-        return UserResponseDto.UserPageInfo.of(user);
+        return UserPageResponseDto.UserPageInfo.of(user);
     }
 
     // 유저 페이지 수정
-    public void modifyUserPage(HttpServletRequest httpServletRequest, String id, UserRequestDto.UserPageModify data) {
+    public void modifyUserPage(HttpServletRequest httpServletRequest, String id, UserPageRequestDto.UserPageModify data) {
         User user1 =  tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         User user2 = userRepository.findById(id).orElseThrow(()->
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     // 유저 비밀번호 변경
-    public void changeUserPassword(HttpServletRequest httpServletRequest, UserRequestDto.UserChangePassword data) {
+    public void changeUserPassword(HttpServletRequest httpServletRequest, UserPageRequestDto.UserChangePassword data) {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         if (user.getSocial().equals(false)) {

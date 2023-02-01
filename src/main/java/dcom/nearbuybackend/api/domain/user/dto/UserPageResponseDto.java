@@ -4,7 +4,7 @@ import dcom.nearbuybackend.api.domain.user.User;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
-public class UserResponseDto {
+public class UserPageResponseDto {
 
     @ApiModel(value = "유저 페이지 조회")
     @Builder
@@ -18,8 +18,8 @@ public class UserResponseDto {
         private String image;
         private String location;
 
-        public static UserResponseDto.UserPageInfo of(User user) {
-            return UserResponseDto.UserPageInfo.builder()
+        public static UserPageResponseDto.UserPageInfo of(User user) {
+            return UserPageResponseDto.UserPageInfo.builder()
                     .name(user.getName())
                     .mannerPoint(user.getMannerPoint())
                     .image(user.getImage())
