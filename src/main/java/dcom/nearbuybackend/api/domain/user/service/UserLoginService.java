@@ -1,7 +1,7 @@
 package dcom.nearbuybackend.api.domain.user.service;
 
 import dcom.nearbuybackend.api.domain.user.User;
-import dcom.nearbuybackend.api.domain.user.dto.UserRequestDto;
+import dcom.nearbuybackend.api.domain.user.dto.UserLoginRequestDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,11 +12,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserLoginService {
     private final UserRepository userRepository;
 
     // 일반 회원 가입
-    public void joinUser(UserRequestDto.UserJoin data) {
+    public void joinUser(UserLoginRequestDto.UserJoin data) {
         Optional<User> duplicateId = userRepository.findById(data.getId());
         Optional<User> duplicateName = userRepository.findByName(data.getName());
 
@@ -38,7 +38,7 @@ public class UserService {
     }
 
     // 일반 로그인
-    public Boolean loginUser(UserRequestDto.UserLogin data) {
+    public Boolean loginUser(UserLoginRequestDto.UserLogin data) {
         User user = userRepository.findById(data.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 아이디 입니다"));
 

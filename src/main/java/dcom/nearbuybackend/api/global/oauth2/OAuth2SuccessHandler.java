@@ -2,13 +2,12 @@ package dcom.nearbuybackend.api.global.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dcom.nearbuybackend.api.domain.user.User;
-import dcom.nearbuybackend.api.domain.user.dto.UserResponseDto;
+import dcom.nearbuybackend.api.domain.user.dto.UserLoginResponseDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
-import dcom.nearbuybackend.api.domain.user.service.UserService;
+import dcom.nearbuybackend.api.domain.user.service.UserLoginService;
 import dcom.nearbuybackend.api.global.security.config.Token;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -27,7 +26,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
-    private final UserService userService;
+    private final UserLoginService userLoginService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
@@ -59,7 +58,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         ));
 
         // refreshToken 갱신
-        userService.storeRefreshToken(user,token.getRefreshToken());
+        userLoginService.storeRefreshToken(user,token.getRefreshToken());
 
         // Response Header에 refreshToken 생성
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
@@ -68,7 +67,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.setStatus(HttpServletResponse.SC_OK);
 
         // Response Body에 accessToken 생성
-        UserResponseDto.UserLogin userLogin = new UserResponseDto.UserLogin();
+        UserLoginResponseDto.UserLogin userLogin = new UserLoginResponseDto.UserLogin();
         userLogin.setAccessToken(token.getAccessToken());
         String accessToken = objectMapper.writeValueAsString(userLogin);
         response.getWriter().write(accessToken);

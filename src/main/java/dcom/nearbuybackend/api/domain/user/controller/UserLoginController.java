@@ -1,9 +1,9 @@
 package dcom.nearbuybackend.api.domain.user.controller;
 
-import dcom.nearbuybackend.api.domain.user.dto.UserRequestDto;
-import dcom.nearbuybackend.api.domain.user.dto.UserResponseDto;
+import dcom.nearbuybackend.api.domain.user.dto.UserLoginRequestDto;
+import dcom.nearbuybackend.api.domain.user.dto.UserLoginResponseDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
-import dcom.nearbuybackend.api.domain.user.service.UserService;
+import dcom.nearbuybackend.api.domain.user.service.UserLoginService;
 import dcom.nearbuybackend.api.global.security.config.Token;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import io.swagger.annotations.Api;
@@ -23,24 +23,24 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-public class UserController {
+public class UserLoginController {
 
-    private final UserService userService;
+    private final UserLoginService userLoginService;
     private final TokenService tokenService;
     private final UserRepository userRepository;
 
     @ApiOperation("일반 회원가입")
     @PostMapping("/join")
-    public ResponseEntity<Void> joinUser(@RequestBody UserRequestDto.UserJoin data) {
-        userService.joinUser(data);
+    public ResponseEntity<Void> joinUser(@RequestBody UserLoginRequestDto.UserJoin data) {
+        userLoginService.joinUser(data);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation("일반 로그인")
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto.UserLogin> loginUser(@RequestBody UserRequestDto.UserLogin data) {
+    public ResponseEntity<UserLoginResponseDto.UserLogin> loginUser(@RequestBody UserLoginRequestDto.UserLogin data) {
 
-        if (userService.loginUser(data)) {
+        if (userLoginService.loginUser(data)) {
 
             Token token = tokenService.generateToken(data.getId(),"USER");
 
@@ -54,9 +54,9 @@ public class UserController {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Set-Cookie", refreshTokenCookie.toString());
 
-            userService.storeRefreshToken(userRepository.findById(data.getId()).get(), token.getRefreshToken());
+            userLoginService.storeRefreshToken(userRepository.findById(data.getId()).get(), token.getRefreshToken());
 
-            return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(UserResponseDto.UserLogin.of(token.getAccessToken()));
+            return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(UserLoginResponseDto.UserLogin.of(token.getAccessToken()));
         }
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"존재하지 않는 아이디 입니다.");

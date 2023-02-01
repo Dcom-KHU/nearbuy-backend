@@ -3,7 +3,7 @@ package dcom.nearbuybackend.api.domain.user.dto;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
-public class UserRequestDto {
+public class UserLoginRequestDto {
     @ApiModel(value = "일반 회원 가입")
     @Builder
     @Getter
