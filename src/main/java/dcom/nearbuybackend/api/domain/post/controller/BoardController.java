@@ -27,4 +27,10 @@ public class BoardController {
     public ResponseEntity<BoardResponseDto.BoardInfo> getBoard(@RequestParam String type, @PageableDefault(size = 9, sort = "time",  direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(boardService.getBoard(type, pageable));
     }
+
+    @ApiOperation("게시판 검색")
+    @GetMapping("/search")
+    public ResponseEntity<BoardResponseDto.BoardInfo> searchBoard(@RequestParam String type, @RequestParam String search, @PageableDefault(size = 9, sort = "time",  direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(boardService.searchBoard(type, search, pageable));
+    }
 }
