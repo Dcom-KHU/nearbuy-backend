@@ -11,12 +11,15 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
-@DiscriminatorColumn(name="type")
+@DiscriminatorColumn(name="D_TYPE")
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column
+    private String type;
 
     @Column
     private String title;
