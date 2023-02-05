@@ -24,5 +24,7 @@ public class Chat {
     private String message;
 
     private Long time;
+
+    private Boolean last;
 }
 
