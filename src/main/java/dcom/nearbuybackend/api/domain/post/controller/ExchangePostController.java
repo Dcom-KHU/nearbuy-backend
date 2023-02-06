@@ -28,14 +28,14 @@ public class ExchangePostController {
 
     @ApiOperation("교환 게시글 등록")
     @PostMapping
-    public ResponseEntity<ExchangePostRequestDto.ExchangePostRegister> registerExchangePost(HttpServletRequest httpServletRequest, @RequestBody ExchangePostRequestDto.ExchangePostRegister exchangePost){
+    public ResponseEntity<Void> registerExchangePost(HttpServletRequest httpServletRequest, @RequestBody ExchangePostRequestDto.ExchangePostRegister exchangePost){
         exchangePostService.registerExchangePost(httpServletRequest, exchangePost);
         return ResponseEntity.ok().build();
     }
 
     @ApiOperation("교환 게시글 수정")
     @PatchMapping
-    public ResponseEntity<ExchangePostRequestDto.ExchangePostModify> modifyExchangePost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestBody ExchangePostRequestDto.ExchangePostModify exchangePost) {
+    public ResponseEntity<Void> modifyExchangePost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestBody ExchangePostRequestDto.ExchangePostModify exchangePost) {
         exchangePostService.modifyExchangePost(httpServletRequest, id, exchangePost);
         return ResponseEntity.ok().build();
     }
