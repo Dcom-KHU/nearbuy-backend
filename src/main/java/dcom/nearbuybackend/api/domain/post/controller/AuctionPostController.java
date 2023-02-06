@@ -28,7 +28,7 @@ public class AuctionPostController {
 
     @ApiOperation("경매 게시글 등록")
     @PostMapping
-    public ResponseEntity<AuctionPostRequestDto.AuctionPostRegister> registerAuctionPost(HttpServletRequest httpServletRequest, @RequestBody AuctionPostRequestDto.AuctionPostRegister auctionPost) {
+    public ResponseEntity<Void> registerAuctionPost(HttpServletRequest httpServletRequest, @RequestBody AuctionPostRequestDto.AuctionPostRegister auctionPost) {
         auctionPostService.registerAuctionPost(httpServletRequest, auctionPost);
 
         return ResponseEntity.ok().build();
@@ -36,7 +36,7 @@ public class AuctionPostController {
 
     @ApiOperation("경매 게시글 수정")
     @PatchMapping
-    public ResponseEntity<AuctionPostRequestDto.AuctionPostModify> modifyAuctionPost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestBody AuctionPostRequestDto.AuctionPostModify auctionPost) {
+    public ResponseEntity<Void> modifyAuctionPost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestBody AuctionPostRequestDto.AuctionPostModify auctionPost) {
         auctionPostService.modifyAuctionPost(httpServletRequest, id, auctionPost);
 
         return ResponseEntity.ok().build();
