@@ -42,5 +42,26 @@ public class AuctionPostController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation("경매 게시글 참여자 조회")
+    @GetMapping("/participate")
+    public ResponseEntity<AuctionPostResponseDto.AuctionPostPeopleInfo> getAuctionPostPeople(@RequestParam Integer id) {
+        return ResponseEntity.ok(auctionPostService.getAuctionPostPeople(id));
+    }
+
+    @ApiOperation("경매 게시글 참여")
+    @PostMapping("/participate")
+    public ResponseEntity<Void> joinAuctionPost(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        auctionPostService.joinAuctionPost(httpServletRequest, id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation("경매 게시글 낙찰")
+    @GetMapping("/finish")
+    public ResponseEntity<Void> getSuccessAuctionPost() {
+        // 아직 미구현
+        return ResponseEntity.ok().build();
+    }
 
 }
+
