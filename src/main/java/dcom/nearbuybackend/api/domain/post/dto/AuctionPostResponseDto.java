@@ -1,6 +1,7 @@
 package dcom.nearbuybackend.api.domain.post.dto;
 
 import dcom.nearbuybackend.api.domain.post.AuctionPost;
+import dcom.nearbuybackend.api.domain.post.AuctionPostPeople;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -52,5 +53,43 @@ public class AuctionPostResponseDto {
                 .deadline(auctionPost.getDeadline())
                 .build();
     }
+
+    @ApiModel("경매 참여자별 조회")
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AuctionPeopleInfo {
+        private String name;
+        private Double mannerPoint;
+        private Integer auctionPrice;
+
+        public static AuctionPeopleInfo of(AuctionPostPeople auctionPostPeople) {
+            return AuctionPeopleInfo.builder()
+                    .name(auctionPostPeople.getUser().getName())
+                    .mannerPoint(auctionPostPeople.getUser().getMannerPoint())
+                    .auctionPrice(auctionPostPeople.getAuctionPrice())
+                    .build();
+        }
+
+    }
+
+
+    @ApiModel("경매 게시글 참여자 조회")
+    @Builder
+    @Getter @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AuctionPostPeopleInfo {
+        private List<AuctionPeopleInfo> user;
+
+        public static AuctionPostPeopleInfo of(List<AuctionPeopleInfo> list) {
+            return AuctionPostPeopleInfo.builder()
+                    .user(list)
+                    .build();
+        }
+    }
+
 
 }
