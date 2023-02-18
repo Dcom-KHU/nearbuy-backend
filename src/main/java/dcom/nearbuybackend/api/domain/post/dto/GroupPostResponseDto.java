@@ -32,7 +32,7 @@ public class GroupPostResponseDto {
         private String distribute;
         private List<Long> day;
 
-        public static GroupPostResponseDto.GroupPostInfo of(GroupPost groupPost) {
+        public static GroupPostInfo of(GroupPost groupPost) {
 
             List<String> imageList = List.of(groupPost.getImage().split(","));
             List<String> tagList = List.of(groupPost.getTag().split(","));
