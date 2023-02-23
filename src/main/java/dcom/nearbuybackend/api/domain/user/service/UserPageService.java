@@ -1,5 +1,8 @@
 package dcom.nearbuybackend.api.domain.user.service;
 
+import dcom.nearbuybackend.api.domain.post.GroupPostPeople;
+import dcom.nearbuybackend.api.domain.post.Post;
+import dcom.nearbuybackend.api.domain.post.repository.*;
 import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.domain.user.dto.UserPageRequestDto;
 import dcom.nearbuybackend.api.domain.user.dto.UserPageResponseDto;
@@ -11,12 +14,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserPageService {
 
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final SalePostRepository salePostRepository;
+    private final ExchangePostRepository exchangePostRepository;
+    private final FreePostRepository freePostRepository;
+    private final AuctionPostRepository auctionPostRepository;
+    private final GroupPostRepository groupPostRepository;
+    private final GroupPostPeopleRepository groupPostPeopleRepository;
 
     private final TokenService tokenService;
 
@@ -63,5 +76,47 @@ public class UserPageService {
         }
         else
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "소셜 로그인은 비밀번호 변경을 지원하지 않습니다.");
+    }
+
+    // 내가 게시한 글 조회
+    public UserPageResponseDto.MyPostInfo getMyPost(HttpServletRequest httpServletRequest, String id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
+        User me = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+        if (!me.equals(user)) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "접근할 수 있는 권한이 없습니다.");
+        }
+
+        List<Optional<Post>> myPost = postRepository.findAllByWriter_Id(user.getId());
+        List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
+        for (Optional<Post> optionalPost :
+                myPost) {
+            Post post = optionalPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시글이 없습니다."));
+            String type = post.getType();
+
+            if (type.equals("sale")) {
+                postList.add(UserPageResponseDto.PostInfo.ofSale(salePostRepository.findById(post.getId()).get()));
+            } else if (type.equals("exchange")) {
+                postList.add(UserPageResponseDto.PostInfo.ofExchange(exchangePostRepository.findById(post.getId()).get()));
+            } else if (type.equals("free")) {
+                postList.add(UserPageResponseDto.PostInfo.ofFree(freePostRepository.findById(post.getId()).get()));
+            } else if (type.equals("auction")) {
+                postList.add(UserPageResponseDto.PostInfo.ofAuction(auctionPostRepository.findById(post.getId()).get()));
+            } else if (type.equals("group")) {
+                List<Optional<GroupPostPeople>> participants = groupPostPeopleRepository.findAllByPost_Id(post.getId());
+                Integer currentPeople = 0;
+                for (Optional<GroupPostPeople> part :
+                        participants) {
+                    if (part.isPresent()) {
+                        currentPeople++;
+                    }
+                }
+
+                postList.add(UserPageResponseDto.PostInfo.ofGroup(groupPostRepository.findById(post.getId()).get(), currentPeople));
+            }
+        }
+
+        return UserPageResponseDto.MyPostInfo.of(postList);
+
     }
 }
