@@ -41,4 +41,16 @@ public class UserPageController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @ApiOperation("내가 게시한 글 조회")
+    @GetMapping("/page/my")
+    public ResponseEntity<UserPageResponseDto.MyPostInfo> getMyPost(HttpServletRequest httpServletRequest, @RequestParam String id) {
+        return ResponseEntity.ok(userPageService.getMyPost(httpServletRequest, id));
+    }
+
+    @ApiOperation("남이 게시한 글 조회")
+    @GetMapping("/page/other")
+    public ResponseEntity<Void> getOthersPost(@RequestParam String id) {
+        return ResponseEntity.ok().build();
+    }
 }
