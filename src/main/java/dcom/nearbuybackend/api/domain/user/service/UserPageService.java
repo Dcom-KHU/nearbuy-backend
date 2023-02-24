@@ -35,28 +35,27 @@ public class UserPageService {
 
     // 유저 페이지 조회
     public UserPageResponseDto.UserPageInfo getUserPage(String id) {
-        User user = userRepository.findById(id).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 유저가 없습니다."));
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
 
         return UserPageResponseDto.UserPageInfo.of(user);
     }
 
     // 유저 페이지 수정
     public void modifyUserPage(HttpServletRequest httpServletRequest, String id, UserPageRequestDto.UserPageModify data) {
-        User user1 =  tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+        User user1 = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        User user2 = userRepository.findById(id).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 유저가 없습니다."));
+        User user2 = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
 
-        if(user1.equals(user2)) {
+        if (user1.equals(user2)) {
             user2.setName(data.getName());
             user2.setImage(data.getImage());
             user2.setLocation(data.getLocation());
 
             userRepository.save(user2);
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"유저 페이지 수정 접근 권한이 없습니다.");
+        } else
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유저 페이지 수정 접근 권한이 없습니다.");
     }
 
     // 유저 비밀번호 변경
@@ -73,8 +72,7 @@ public class UserPageService {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "새로운 비밀번호와 새로운 비밀번호 확인이 일치하지 않습니다.");
             } else
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다.");
-        }
-        else
+        } else
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "소셜 로그인은 비밀번호 변경을 지원하지 않습니다.");
     }
 
