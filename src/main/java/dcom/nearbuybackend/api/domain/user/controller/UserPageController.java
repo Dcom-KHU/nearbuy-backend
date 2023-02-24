@@ -50,7 +50,7 @@ public class UserPageController {
 
     @ApiOperation("남이 게시한 글 조회")
     @GetMapping("/page/other")
-    public ResponseEntity<Void> getOthersPost(@RequestParam String id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserPageResponseDto.OthersPostInfo> getOthersPost(@RequestParam String id) {
+        return ResponseEntity.ok(userPageService.getOthersPost(id));
     }
 }

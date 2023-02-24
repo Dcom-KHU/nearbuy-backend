@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModel;
 import lombok.*;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UserPageResponseDto {
 
@@ -43,6 +42,22 @@ public class UserPageResponseDto {
 
         public static UserPageResponseDto.MyPostInfo of(List<PostInfo> postList) {
             return MyPostInfo.builder()
+                    .post(postList)
+                    .build();
+        }
+    }
+
+    @ApiModel("남이 게시한 글 조회")
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OthersPostInfo {
+        List<PostInfo> post;
+
+        public static OthersPostInfo of(List<PostInfo> postList) {
+            return OthersPostInfo.builder()
                     .post(postList)
                     .build();
         }
