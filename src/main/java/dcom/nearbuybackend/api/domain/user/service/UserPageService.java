@@ -85,10 +85,17 @@ public class UserPageService {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "접근할 수 있는 권한이 없습니다.");
         }
 
-        List<Optional<Post>> myPost = postRepository.findAllByWriter_Id(user.getId());
+        List<UserPageResponseDto.PostInfo> postList = getPostInfoList(me);
+
+        return UserPageResponseDto.MyPostInfo.of(postList);
+
+    }
+
+    private List<UserPageResponseDto.PostInfo> getPostInfoList(User user) {
+        List<Optional<Post>> userPost = postRepository.findAllByWriter_Id(user.getId());
         List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
         for (Optional<Post> optionalPost :
-                myPost) {
+                userPost) {
             Post post = optionalPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시글이 없습니다."));
             String type = post.getType();
 
@@ -106,35 +113,14 @@ public class UserPageService {
                 postList.add(UserPageResponseDto.PostInfo.ofGroup(groupPostRepository.findById(post.getId()).get(), currentPeople));
             }
         }
-
-        return UserPageResponseDto.MyPostInfo.of(postList);
-
+        return postList;
     }
 
     public UserPageResponseDto.OthersPostInfo getOthersPost(String id) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
 
-        List<Optional<Post>> otherPost = postRepository.findAllByWriter_Id(user.getId());
-        List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
-        for (Optional<Post> optionalPost :
-                otherPost) {
-            Post post = optionalPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시글이 없습니다."));
-            String type = post.getType();
-            if (type.equals("sale")) {
-                postList.add(UserPageResponseDto.PostInfo.ofSale(salePostRepository.findById(post.getId()).get()));
-            } else if (type.equals("exchange")) {
-                postList.add(UserPageResponseDto.PostInfo.ofExchange(exchangePostRepository.findById(post.getId()).get()));
-            } else if (type.equals("free")) {
-                postList.add(UserPageResponseDto.PostInfo.ofFree(freePostRepository.findById(post.getId()).get()));
-            } else if (type.equals("auction")) {
-                postList.add(UserPageResponseDto.PostInfo.ofAuction(auctionPostRepository.findById(post.getId()).get()));
-            } else if (type.equals("group")) {
-                List<Optional<GroupPostPeople>> participants = groupPostPeopleRepository.findAllByPost_Id(post.getId());
-                Integer currentPeople = getCurrentPeople(participants);
-                postList.add(UserPageResponseDto.PostInfo.ofGroup(groupPostRepository.findById(post.getId()).get(), currentPeople));
-            }
-        }
+        List<UserPageResponseDto.PostInfo> postList = getPostInfoList(user);
 
         return UserPageResponseDto.OthersPostInfo.of(postList);
     }
