@@ -2,6 +2,7 @@ package dcom.nearbuybackend.api.domain.user.dto;
 
 import dcom.nearbuybackend.api.domain.post.*;
 import dcom.nearbuybackend.api.domain.user.User;
+import dcom.nearbuybackend.api.domain.user.UserReview;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -178,4 +179,47 @@ public class UserPageResponseDto {
 
     }
 
+    @ApiModel("거래 후기 조회")
+    @Builder
+    @Getter
+    @Setter
+    public static class UserReviewInfo {
+        private String name;
+        private Double mannerPoint;
+        private List<ReviewInfo> review;
+
+        public static UserReviewInfo of(User user, List<ReviewInfo> reviewList) {
+            return UserReviewInfo.builder()
+                    .name(user.getName())
+                    .mannerPoint(user.getMannerPoint())
+                    .review(reviewList)
+                    .build();
+        }
+    }
+
+    @ApiModel("거래 후기별 조회")
+    @Builder
+    @Getter
+    @Setter
+    public static class ReviewInfo {
+        private Integer id;
+        private String emotion;
+        private Boolean reply;
+        private Boolean location;
+        private Boolean time;
+        private Boolean manner;
+        private String detail;
+
+        public static ReviewInfo of(UserReview userReview) {
+            return ReviewInfo.builder()
+                    .id(userReview.getId())
+                    .emotion(userReview.getEmotion())
+                    .reply(userReview.getReply())
+                    .location(userReview.getLocation())
+                    .time(userReview.getTime())
+                    .manner(userReview.getManner())
+                    .detail(userReview.getDetail())
+                    .build();
+        }
+    }
 }

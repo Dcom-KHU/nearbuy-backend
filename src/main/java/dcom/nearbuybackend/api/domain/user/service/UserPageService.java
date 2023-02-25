@@ -5,10 +5,12 @@ import dcom.nearbuybackend.api.domain.post.Post;
 import dcom.nearbuybackend.api.domain.post.repository.*;
 import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.domain.user.UserLike;
+import dcom.nearbuybackend.api.domain.user.UserReview;
 import dcom.nearbuybackend.api.domain.user.dto.UserPageRequestDto;
 import dcom.nearbuybackend.api.domain.user.dto.UserPageResponseDto;
 import dcom.nearbuybackend.api.domain.user.repository.UserLikeRepository;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
+import dcom.nearbuybackend.api.domain.user.repository.UserReviewRepository;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ public class UserPageService {
 
     private final UserRepository userRepository;
     private final UserLikeRepository userLikeRepository;
+    private final UserReviewRepository userReviewRepository;
     private final PostRepository postRepository;
     private final SalePostRepository salePostRepository;
     private final ExchangePostRepository exchangePostRepository;
@@ -158,5 +161,35 @@ public class UserPageService {
         List<UserPageResponseDto.PostInfo> postList = getLikedPostInfoList(userLikeRepository.findAllByUser(user));
 
         return UserPageResponseDto.LikedPostInfo.of(postList);
+    }
+
+    public UserPageResponseDto.UserReviewInfo getUserReview(String id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
+
+        List<UserReview> reviewList = userReviewRepository.findAllByUser(user);
+        List<UserPageResponseDto.ReviewInfo> reviewInfoList = new ArrayList<>();
+        for (UserReview userReview: reviewList) {
+            reviewInfoList.add(UserPageResponseDto.ReviewInfo.of(userReview));
+        }
+
+        return UserPageResponseDto.UserReviewInfo.of(user, reviewInfoList);
+    }
+
+    public void registerUserReview(HttpServletRequest httpServletRequest,
+                                   UserPageRequestDto.UserReviewRegister review) {
+
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        UserReview userReview = new UserReview();
+        userReview.setUser(user);
+        userReview.setEmotion(review.getEmotion());
+        userReview.setReply(review.getReply());
+        userReview.setLocation(review.getLocation());
+        userReview.setTime(review.getTime());
+        userReview.setManner(review.getManner());
+        userReview.setDetail(review.getDetail());
+
+        userReviewRepository.save(userReview);
     }
 }

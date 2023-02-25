@@ -28,4 +28,17 @@ public class UserPageRequestDto {
         private String newPassword;
         private String newPasswordCheck;
     }
+
+    @ApiModel(value = "거래 후기 등록")
+    @Builder
+    @Getter
+    @Setter
+    public static class UserReviewRegister {
+        private String emotion;
+        private Boolean reply;
+        private Boolean location;
+        private Boolean time;
+        private Boolean manner;
+        private String detail;
+    }
 }

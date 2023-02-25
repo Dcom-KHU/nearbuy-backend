@@ -59,4 +59,20 @@ public class UserPageController {
     public ResponseEntity<UserPageResponseDto.LikedPostInfo> getLikedPost(@RequestParam String id) {
         return ResponseEntity.ok(userPageService.getLikedPost(id));
     }
+
+    @ApiOperation("거래 후기 조회")
+    @GetMapping("/page/review")
+    public ResponseEntity<UserPageResponseDto.UserReviewInfo> getUserReview(@RequestParam String id) {
+
+        return ResponseEntity.ok(userPageService.getUserReview(id));
+    }
+
+    @ApiOperation("거래 후기 등록")
+    @PostMapping("/page/review")
+    public ResponseEntity<Void> registerUserReview(HttpServletRequest httpServletRequest,
+                                                   @RequestBody UserPageRequestDto.UserReviewRegister userReview) {
+
+        userPageService.registerUserReview(httpServletRequest, userReview);
+        return ResponseEntity.ok().build();
+    }
 }
