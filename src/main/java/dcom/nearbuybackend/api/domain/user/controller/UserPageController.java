@@ -53,4 +53,10 @@ public class UserPageController {
     public ResponseEntity<UserPageResponseDto.OthersPostInfo> getOthersPost(@RequestParam String id) {
         return ResponseEntity.ok(userPageService.getOthersPost(id));
     }
+
+    @ApiOperation("찜한 글 조회")
+    @GetMapping("/page/like")
+    public ResponseEntity<UserPageResponseDto.LikedPostInfo> getLikedPost(@RequestParam String id) {
+        return ResponseEntity.ok(userPageService.getLikedPost(id));
+    }
 }

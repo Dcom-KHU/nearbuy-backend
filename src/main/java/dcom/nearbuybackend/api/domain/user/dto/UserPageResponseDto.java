@@ -63,6 +63,22 @@ public class UserPageResponseDto {
         }
     }
 
+    @ApiModel("남이 게시한 글 조회")
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikedPostInfo {
+        List<PostInfo> post;
+
+        public static LikedPostInfo of(List<PostInfo> postList) {
+            return LikedPostInfo.builder()
+                    .post(postList)
+                    .build();
+        }
+    }
+
     @ApiModel("게시글별 조회")
     @Builder
     @Getter

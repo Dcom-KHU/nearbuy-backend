@@ -4,8 +4,10 @@ import dcom.nearbuybackend.api.domain.post.GroupPostPeople;
 import dcom.nearbuybackend.api.domain.post.Post;
 import dcom.nearbuybackend.api.domain.post.repository.*;
 import dcom.nearbuybackend.api.domain.user.User;
+import dcom.nearbuybackend.api.domain.user.UserLike;
 import dcom.nearbuybackend.api.domain.user.dto.UserPageRequestDto;
 import dcom.nearbuybackend.api.domain.user.dto.UserPageResponseDto;
+import dcom.nearbuybackend.api.domain.user.repository.UserLikeRepository;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class UserPageService {
 
     private final UserRepository userRepository;
+    private final UserLikeRepository userLikeRepository;
     private final PostRepository postRepository;
     private final SalePostRepository salePostRepository;
     private final ExchangePostRepository exchangePostRepository;
@@ -97,23 +100,35 @@ public class UserPageService {
         for (Optional<Post> optionalPost :
                 userPost) {
             Post post = optionalPost.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시글이 없습니다."));
-            String type = post.getType();
-
-            if (type.equals("sale")) {
-                postList.add(UserPageResponseDto.PostInfo.ofSale(salePostRepository.findById(post.getId()).get()));
-            } else if (type.equals("exchange")) {
-                postList.add(UserPageResponseDto.PostInfo.ofExchange(exchangePostRepository.findById(post.getId()).get()));
-            } else if (type.equals("free")) {
-                postList.add(UserPageResponseDto.PostInfo.ofFree(freePostRepository.findById(post.getId()).get()));
-            } else if (type.equals("auction")) {
-                postList.add(UserPageResponseDto.PostInfo.ofAuction(auctionPostRepository.findById(post.getId()).get()));
-            } else if (type.equals("group")) {
-                List<Optional<GroupPostPeople>> participants = groupPostPeopleRepository.findAllByPost_Id(post.getId());
-                Integer currentPeople = getCurrentPeople(participants);
-                postList.add(UserPageResponseDto.PostInfo.ofGroup(groupPostRepository.findById(post.getId()).get(), currentPeople));
-            }
+            getPostInfo(postList, post);
         }
         return postList;
+    }
+
+    private List<UserPageResponseDto.PostInfo> getLikedPostInfoList(List<UserLike> userLikeList) {
+        List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
+        for (UserLike userLike : userLikeList) {
+            getPostInfo(postList, userLike.getPost());
+        }
+        return postList;
+    }
+
+    private void getPostInfo(List<UserPageResponseDto.PostInfo> postList, Post post) {
+        String type = post.getType();
+
+        if (type.equals("sale")) {
+            postList.add(UserPageResponseDto.PostInfo.ofSale(salePostRepository.findById(post.getId()).get()));
+        } else if (type.equals("exchange")) {
+            postList.add(UserPageResponseDto.PostInfo.ofExchange(exchangePostRepository.findById(post.getId()).get()));
+        } else if (type.equals("free")) {
+            postList.add(UserPageResponseDto.PostInfo.ofFree(freePostRepository.findById(post.getId()).get()));
+        } else if (type.equals("auction")) {
+            postList.add(UserPageResponseDto.PostInfo.ofAuction(auctionPostRepository.findById(post.getId()).get()));
+        } else if (type.equals("group")) {
+            List<Optional<GroupPostPeople>> participants = groupPostPeopleRepository.findAllByPost_Id(post.getId());
+            Integer currentPeople = getCurrentPeople(participants);
+            postList.add(UserPageResponseDto.PostInfo.ofGroup(groupPostRepository.findById(post.getId()).get(), currentPeople));
+        }
     }
 
     public UserPageResponseDto.OthersPostInfo getOthersPost(String id) {
@@ -134,5 +149,14 @@ public class UserPageService {
             }
         }
         return currentPeople;
+    }
+
+    public UserPageResponseDto.LikedPostInfo getLikedPost(String id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
+
+        List<UserPageResponseDto.PostInfo> postList = getLikedPostInfoList(userLikeRepository.findAllByUser(user));
+
+        return UserPageResponseDto.LikedPostInfo.of(postList);
     }
 }
