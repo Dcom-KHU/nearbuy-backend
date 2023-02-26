@@ -24,7 +24,7 @@ public class User {
     @Column
     private Double mannerPoint;
 
-    @Column
+    @Column(length = 2048)
     private String image;
 
     @Column
