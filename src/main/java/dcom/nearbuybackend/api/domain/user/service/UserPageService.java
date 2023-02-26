@@ -128,7 +128,7 @@ public class UserPageService {
         } else if (type.equals("auction")) {
             postList.add(UserPageResponseDto.PostInfo.ofAuction(auctionPostRepository.findById(post.getId()).get()));
         } else if (type.equals("group")) {
-            List<Optional<GroupPostPeople>> participants = groupPostPeopleRepository.findAllByPost_Id(post.getId());
+            List<GroupPostPeople> participants = groupPostPeopleRepository.findByPost(post);
             Integer currentPeople = getCurrentPeople(participants);
             postList.add(UserPageResponseDto.PostInfo.ofGroup(groupPostRepository.findById(post.getId()).get(), currentPeople));
         }
@@ -143,13 +143,11 @@ public class UserPageService {
         return UserPageResponseDto.OthersPostInfo.of(postList);
     }
 
-    private static Integer getCurrentPeople(List<Optional<GroupPostPeople>> participants) {
+    private static Integer getCurrentPeople(List<GroupPostPeople> participants) {
         Integer currentPeople = 0;
-        for (Optional<GroupPostPeople> part :
+        for (GroupPostPeople part :
                 participants) {
-            if (part.isPresent()) {
                 currentPeople++;
-            }
         }
         return currentPeople;
     }
