@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
-@DiscriminatorColumn(name="type")
+@DiscriminatorColumn(name="D_TYPE")
 public class Post {
 
     @Id
@@ -19,15 +19,18 @@ public class Post {
     private Integer id;
 
     @Column
+    private String type;
+
+    @Column
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
-    @Column
+    @Column(length=1024)
     private String detail;
 
-    @Column
+    @Column(length=2048)
     private String image;
 
     @Column
@@ -36,7 +39,7 @@ public class Post {
     @Column
     private Boolean ongoing;
 
-    @Column
+    @Column(length=2048)
     private String tag;
 
     @Column
