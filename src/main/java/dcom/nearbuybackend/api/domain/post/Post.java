@@ -19,6 +19,9 @@ public class Post {
     private Integer id;
 
     @Column
+    private String type;
+
+    @Column
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
