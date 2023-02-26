@@ -16,12 +16,12 @@ public class GroupPost extends Post {
     private Integer groupPrice;
 
     @Column
-    private Integer total;
+    private Integer totalPeople;
 
     @Column
     private String distribute;
 
     @Column
-    private Long day;
+    private String day;
 }
 
