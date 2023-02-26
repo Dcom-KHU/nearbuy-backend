@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface GroupPostPeopleRepository extends JpaRepository<GroupPostPeople, Integer> {
+
     Optional<GroupPostPeople> findByPostAndUser(Post post, User user);
 
     List<GroupPostPeople> findByPost(Post post);
