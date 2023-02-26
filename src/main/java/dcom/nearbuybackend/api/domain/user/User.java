@@ -31,5 +31,8 @@ public class User {
     private String location;
 
     @Column
+    private Boolean social;
+
+    @Column(length = 1024)
     private String refreshToken;
 }
