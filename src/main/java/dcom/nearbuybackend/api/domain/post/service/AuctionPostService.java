@@ -41,6 +41,7 @@ public class AuctionPostService {
 
         AuctionPost auctionPost = new AuctionPost();
 
+        auctionPost.setType("auction");
         auctionPost.setTitle(post.getTitle());
         auctionPost.setWriter(user);
         auctionPost.setDetail(post.getDetail());

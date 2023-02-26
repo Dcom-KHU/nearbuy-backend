@@ -37,6 +37,7 @@ public class SalePostService {
 
         SalePost salePost = new SalePost();
 
+        salePost.setType("sale");
         salePost.setTitle(post.getTitle());
         salePost.setWriter(user);
         salePost.setDetail(post.getDetail());

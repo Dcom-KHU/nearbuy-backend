@@ -38,6 +38,7 @@ public class ExchangePostService {
         String tagString = getJoinByComma(post.getTag());
 
         ExchangePost exchangePost = new ExchangePost();
+        exchangePost.setType("exchange");
         exchangePost.setTitle(post.getTitle());
         exchangePost.setWriter(user);
         exchangePost.setDetail(post.getDetail());
