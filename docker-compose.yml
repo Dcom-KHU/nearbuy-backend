@@ -18,3 +18,22 @@ services:
       - MONGO_INITDB_DATABASE=nearbuy
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=
+
+  springboot:
+    container_name: springboot_application
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_database:3306/nearbuy?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD:
+      SPRING_DATA_MONGODB_DATABASE: "nearbuy"
+      SPRING_DATA_MONGODB_USERNAME: "admin"
+      SPRING_DATA_MONGODB_PASSWORD:
+      SPRING_DATA_MONGODB_AUTHENTICATION-DATABASE: "admin"
+    depends_on:
+      - mysql
+      - mongodb

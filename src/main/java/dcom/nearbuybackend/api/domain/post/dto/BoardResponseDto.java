@@ -121,7 +121,7 @@ public class BoardResponseDto {
                     .location(groupPost.getLocation())
                     .ongoing(groupPost.getOngoing())
                     .groupPrice(groupPost.getGroupPrice())
-                    .totalPeople(groupPost.getTotal())
+                    .totalPeople(groupPost.getTotalPeople())
                     .build();
         }
     }

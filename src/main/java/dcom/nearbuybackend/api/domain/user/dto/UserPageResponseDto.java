@@ -172,7 +172,7 @@ public class UserPageResponseDto {
                     .location(groupPost.getLocation())
                     .ongoing(groupPost.getOngoing())
                     .groupPrice(groupPost.getGroupPrice())
-                    .totalPeople(groupPost.getTotal())
+                    .totalPeople(groupPost.getTotalPeople())
                     .currentPeople(currentPeople)
                     .build();
         }
