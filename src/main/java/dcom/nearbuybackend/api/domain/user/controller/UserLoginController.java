@@ -57,14 +57,20 @@ public class UserLoginController {
             userLoginService.storeRefreshToken(userRepository.findById(data.getId()).get(), token.getRefreshToken());
 
             return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(UserLoginResponseDto.UserLogin.of(token.getAccessToken()));
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"존재하지 않는 아이디 입니다.");
+        } else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디 입니다.");
     }
 
     @ApiOperation("소셜 로그인")
     @GetMapping("/login/social")
     public void socialLoginUser(HttpServletResponse httpServletResponse, @RequestParam String platform) throws IOException {
-        httpServletResponse.sendRedirect("http://localhost:8080/oauth2/authorization/"+ platform);
+        httpServletResponse.sendRedirect("http://localhost:8080/oauth2/authorization/" + platform);
+    }
+
+    @ApiOperation("비밀번호 찾기")
+    @PostMapping("find")
+    public ResponseEntity<Void> findUserPassword(@RequestBody UserLoginRequestDto.UserFindPassword data) {
+        userLoginService.findPassword(data);
+        return ResponseEntity.ok().build();
     }
 }

@@ -27,4 +27,16 @@ public class UserLoginRequestDto {
         private String id;
         private String password;
     }
+
+    @ApiModel(value = "비밀번호 찾기")
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserFindPassword {
+        private String id;
+        private String name;
+    }
+
 }
