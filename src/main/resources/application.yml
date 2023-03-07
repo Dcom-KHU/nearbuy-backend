@@ -17,9 +17,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  server:
-    error:
-      include-message: always
   mail:
     host: smtp.gmail.com
     port: 587
@@ -32,3 +29,8 @@ spring:
             enable: true
           auth:
             enable: true
+
+server:
+  error:
+    include-message: always
+    include-stacktrace: never
