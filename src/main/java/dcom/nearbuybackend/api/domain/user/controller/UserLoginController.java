@@ -6,8 +6,7 @@ import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import dcom.nearbuybackend.api.domain.user.service.UserLoginService;
 import dcom.nearbuybackend.api.global.security.config.Token;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Api(tags = {"User Controller"})
+@Api(tags = {"User Login Controller"})
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -29,16 +28,24 @@ public class UserLoginController {
     private final TokenService tokenService;
     private final UserRepository userRepository;
 
-    @ApiOperation("일반 회원가입")
+    @ApiOperation(value = "일반 회원가입", notes = "아이디(이메일), 이름(닉네임), 비밀번호, 사용자 집 위치를 입력받아 일반 회원가입을 진행합니다.")
+    @ApiResponses ({
+            @ApiResponse(code = 400, message = "이미 존재하는 아이디, 이름입니다.")
+    })
     @PostMapping("/join")
-    public ResponseEntity<Void> joinUser(@RequestBody UserLoginRequestDto.UserJoin data) {
+    public ResponseEntity<Void> joinUser(@ApiParam(value = "일반 회원가입 정보", required = true) @RequestBody UserLoginRequestDto.UserJoin data) {
         userLoginService.joinUser(data);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ApiOperation("일반 로그인")
+    @ApiOperation(value = "일반 로그인", notes = "아이디(이메일), 비밀번호를 입력받아 일반 로그인을 진행합니다.")
+    @ApiResponses ({
+            @ApiResponse(code = 400, message = "존재하지 않는 아이디입니다."),
+            @ApiResponse(code = 401, message = "비밀번호가 일치하지 않습니다."),
+            @ApiResponse(code = 404, message = "존재하지 않는 아이디입니다.")
+    })
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDto.UserLogin> loginUser(@RequestBody UserLoginRequestDto.UserLogin data) {
+    public ResponseEntity<UserLoginResponseDto.UserLogin> loginUser(@ApiParam(value = "일반 로그인 정보", required = true) @RequestBody UserLoginRequestDto.UserLogin data) {
 
         if (userLoginService.loginUser(data)) {
 
@@ -61,15 +68,18 @@ public class UserLoginController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디 입니다.");
     }
 
-    @ApiOperation("소셜 로그인")
+    @ApiOperation(value = "소셜 로그인", notes = "소셜 로그인 플랫폼을 입력받아 해당하는 플랫폼의 소셜 로그인을 진행합니다.")
     @GetMapping("/login/social")
-    public void socialLoginUser(HttpServletResponse httpServletResponse, @RequestParam String platform) throws IOException {
+    public void socialLoginUser(HttpServletResponse httpServletResponse, @ApiParam(value = "소셜 로그인 플랫폼", required = true) @RequestParam String platform) throws IOException {
         httpServletResponse.sendRedirect("http://localhost:8080/oauth2/authorization/" + platform);
     }
 
-    @ApiOperation("비밀번호 찾기")
+    @ApiOperation(value = "비밀번호 찾기", notes = "해당하는 아이디(이메일)로 임시 비밀번호를 담은 메일을 전송합니다.")
+    @ApiResponses ({
+            @ApiResponse(code = 404, message = "해당하는 유저의 이메일이나 이름이 없습니다.")
+    })
     @PostMapping("find")
-    public ResponseEntity<Void> findUserPassword(@RequestBody UserLoginRequestDto.UserFindPassword data) {
+    public ResponseEntity<Void> findUserPassword(@ApiParam(value = "비밀번호 찾기 정보", required = true) @RequestBody UserLoginRequestDto.UserFindPassword data) {
         userLoginService.findPassword(data);
         return ResponseEntity.ok().build();
     }

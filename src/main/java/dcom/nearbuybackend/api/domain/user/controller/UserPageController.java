@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Api(tags = {"User Controller"})
+@Api(tags = {"User Page Controller"})
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
