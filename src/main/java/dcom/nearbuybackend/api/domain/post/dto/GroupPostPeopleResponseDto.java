@@ -28,7 +28,7 @@ public class GroupPostPeopleResponseDto {
         }
     }
 
-    @ApiModel(value = "공구 게시글 참여자별 정보)
+    @ApiModel(value = "공구 게시글 참여자별 정보")
     @Builder
     @Getter
     @Setter
