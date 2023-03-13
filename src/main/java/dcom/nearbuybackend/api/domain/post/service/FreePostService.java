@@ -40,6 +40,7 @@ public class FreePostService {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         FreePost freePost = new FreePost();
+        freePost.setType("free");
         freePost.setTitle(post.getTitle());
         freePost.setWriter(user);
         freePost.setDetail(post.getDetail());

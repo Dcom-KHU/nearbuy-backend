@@ -1,8 +1,7 @@
 package dcom.nearbuybackend.api.domain.post.controller;
 
 import dcom.nearbuybackend.api.domain.post.service.PostService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,13 @@ public class PostController {
 
     private final PostService postService;
 
-    @ApiOperation("게시글 삭제")
+    @ApiOperation(value = "게시글 삭제", notes = "[인증 필요] 입력받은 ID에 해당하는 게시글을 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 삭제 접근 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @DeleteMapping
-    public ResponseEntity<Void> deletePost(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+    public ResponseEntity<Void> deletePost(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
         postService.deletePost(httpServletRequest, id);
 
         return ResponseEntity.status(HttpStatus.OK).build();

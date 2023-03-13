@@ -49,6 +49,8 @@ public class GroupPostService {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         GroupPost groupPost = new GroupPost();
+
+        groupPost.setType("group");
         groupPost.setTitle(post.getTitle());
         groupPost.setWriter(user);
         groupPost.setDetail(post.getDetail());

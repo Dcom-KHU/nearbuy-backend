@@ -3,8 +3,7 @@ package dcom.nearbuybackend.api.domain.post.controller;
 import dcom.nearbuybackend.api.domain.post.dto.ExchangePostRequestDto;
 import dcom.nearbuybackend.api.domain.post.dto.ExchangePostResponseDto;
 import dcom.nearbuybackend.api.domain.post.service.ExchangePostService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +18,30 @@ import javax.servlet.http.HttpServletRequest;
 public class ExchangePostController {
     private final ExchangePostService exchangePostService;
 
-    @ApiOperation("교환 게시글 조회")
+    @ApiOperation(value = "교환 게시글 조회", notes = "교환 게시글 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ExchangePostResponseDto.ExchangePostInfo> getExchangePost(@RequestParam Integer id) {
+    public ResponseEntity<ExchangePostResponseDto.ExchangePostInfo> getExchangePost(@ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
         return ResponseEntity.ok(exchangePostService.getExchangePost(id));
     }
 
-    @ApiOperation("교환 게시글 등록")
+    @ApiOperation(value = "교환 게시글 등록", notes = "[인증 필요] 교환 게시글 정보를 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> registerExchangePost(HttpServletRequest httpServletRequest, @RequestBody ExchangePostRequestDto.ExchangePostRegister exchangePost){
+    public ResponseEntity<Void> registerExchangePost(HttpServletRequest httpServletRequest, @ApiParam(value = "교환 게시글 등록 정보", required = true) @RequestBody ExchangePostRequestDto.ExchangePostRegister exchangePost){
         exchangePostService.registerExchangePost(httpServletRequest, exchangePost);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation("교환 게시글 수정")
+    @ApiOperation(value = "교환 게시글 수정", notes = "[인증 필요] 교환 게시글 정보를 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 수정 접근 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @PatchMapping
-    public ResponseEntity<Void> modifyExchangePost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestBody ExchangePostRequestDto.ExchangePostModify exchangePost) {
+    public ResponseEntity<Void> modifyExchangePost(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id, @ApiParam(value = "교환 게시글 수정 정보", required = true) @RequestBody ExchangePostRequestDto.ExchangePostModify exchangePost) {
         exchangePostService.modifyExchangePost(httpServletRequest, id, exchangePost);
         return ResponseEntity.ok().build();
     }
