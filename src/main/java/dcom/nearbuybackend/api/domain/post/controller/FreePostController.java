@@ -3,8 +3,7 @@ package dcom.nearbuybackend.api.domain.post.controller;
 import dcom.nearbuybackend.api.domain.post.dto.FreePostRequestDto;
 import dcom.nearbuybackend.api.domain.post.dto.FreePostResponseDto;
 import dcom.nearbuybackend.api.domain.post.service.FreePostService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,27 +19,34 @@ public class FreePostController {
 
     private final FreePostService freePostService;
 
-    @ApiOperation("나눔 게시글 조회")
+    @ApiOperation(value = "나눔 게시글 조회", notes = "나눔 게시글 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<FreePostResponseDto.FreePostInfo> getFreePost(@RequestParam Integer id) {
+    public ResponseEntity<FreePostResponseDto.FreePostInfo> getFreePost(@ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
 
         return ResponseEntity.ok(freePostService.getFreePost(id));
     }
 
-    @ApiOperation("나눔 게시글 등록")
+    @ApiOperation(value = "나눔 게시글 등록", notes = "[인증 필요] 나눔 게시글 정보를 등록합니다.")
     @PostMapping
     public ResponseEntity<Void> registerFreePost(HttpServletRequest httpServletRequest,
-                                                 @RequestBody FreePostRequestDto.FreePostRegister freePost) {
+                                                 @ApiParam(value = "나눔 게시글 등록 정보", required = true) @RequestBody FreePostRequestDto.FreePostRegister freePost) {
 
         freePostService.registerFreePost(httpServletRequest, freePost);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation("나눔 게시글 수정")
+    @ApiOperation(value = "나눔 게시글 수정", notes = "[인증 필요] 나눔 게시글 정보를 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 수정 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @PatchMapping
-    public ResponseEntity<Void> modifyFreePost(HttpServletRequest httpServletRequest, @RequestParam Integer id,
-                                               @RequestBody FreePostRequestDto.FreePostModify freePost) {
+    public ResponseEntity<Void> modifyFreePost(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id,
+                                               @ApiParam(value = "나눔 게시글 수정 정보", required = true) @RequestBody FreePostRequestDto.FreePostModify freePost) {
 
         freePostService.modifyFreePost(httpServletRequest, id, freePost);
         return ResponseEntity.ok().build();
