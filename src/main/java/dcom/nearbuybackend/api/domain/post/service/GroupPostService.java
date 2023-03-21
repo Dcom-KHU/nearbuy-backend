@@ -61,6 +61,7 @@ public class GroupPostService {
         groupPost.setTag(getJoinByComma(post.getTag()));
         groupPost.setGroupPrice(post.getGroupPrice());
         groupPost.setTotalPeople(post.getTotalPeople());
+        groupPost.setCurrentPeople(0);
         groupPost.setDistribute(post.getDistribute());
         groupPost.setDay(post.getDay().stream().map(l -> Long.toString(l)).collect(Collectors.joining(",")));
 
@@ -117,11 +118,14 @@ public class GroupPostService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "해당 게시글에 이미 참여한 user 입니다.");
         });
 
+        groupPost.setCurrentPeople(groupPost.getCurrentPeople() + 1);
+
         GroupPostPeople groupPostPeople = new GroupPostPeople();
         groupPostPeople.setPost(groupPost);
         groupPostPeople.setUser(user);
         groupPostPeople.setParticipate(true);
 
+        groupPostRepository.save(groupPost);
         groupPostPeopleRepository.save(groupPostPeople);
     }
 

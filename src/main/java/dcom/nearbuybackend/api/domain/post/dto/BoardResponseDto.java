@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public class BoardResponseDto {
+
     @ApiModel(value = "게시판 조회 정보")
     @Builder
     @Getter
@@ -74,6 +75,8 @@ public class BoardResponseDto {
         private Integer groupPrice;
         @ApiModelProperty(value = "[공구] 게시글 총 인원")
         private Integer totalPeople;
+        @ApiModelProperty(value = "[공구] 게시글 현재 인원")
+        private Integer currentPeople;
 
 
         // 판매 게시글
@@ -130,6 +133,7 @@ public class BoardResponseDto {
 
         // 공구 게시글
         public static BoardPostInfo ofGroup(GroupPost groupPost) {
+
             return BoardPostInfo.builder()
                     .id(groupPost.getId())
                     .type(groupPost.getType())
@@ -139,6 +143,7 @@ public class BoardResponseDto {
                     .ongoing(groupPost.getOngoing())
                     .groupPrice(groupPost.getGroupPrice())
                     .totalPeople(groupPost.getTotalPeople())
+                    .currentPeople(groupPost.getCurrentPeople())
                     .build();
         }
     }
