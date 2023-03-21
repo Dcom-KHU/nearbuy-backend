@@ -42,7 +42,7 @@ public class GroupPostResponseDto {
         private Integer groupPrice;
         @ApiModelProperty(value = "[공구] 게시글 총 인원")
         private Integer totalPeople;
-        @ApiModelProperty(value = "[공구] 게시글 공구 방식")
+        @ApiModelProperty(value = "[공구] 게시글 공구 방식(DIRECT, POST)")
         private String distribute;
         @ApiModelProperty(value = "[공구] 게시글 공구 날짜")
         private List<Long> day;
