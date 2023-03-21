@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
@@ -56,6 +57,21 @@ public class UserLoginService {
     public void storeRefreshToken(User user, String refreshToken) {
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
+    }
+
+    public void logout(User user) {
+        user.setRefreshToken(null);
+        userRepository.save(user);
+    }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
+    }
+
+    public User getUserByRefreshToken(String refreshToken) {
+        return userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
     }
 
     // 비밀번호 찾기

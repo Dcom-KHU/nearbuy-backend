@@ -1,8 +1,8 @@
 package dcom.nearbuybackend.api.domain.user.controller;
 
+import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.domain.user.dto.UserLoginRequestDto;
 import dcom.nearbuybackend.api.domain.user.dto.UserLoginResponseDto;
-import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import dcom.nearbuybackend.api.domain.user.service.UserLoginService;
 import dcom.nearbuybackend.api.global.security.config.Token;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -26,7 +28,6 @@ public class UserLoginController {
 
     private final UserLoginService userLoginService;
     private final TokenService tokenService;
-    private final UserRepository userRepository;
 
     @ApiOperation(value = "일반 회원가입", notes = "아이디(이메일), 이름(닉네임), 비밀번호, 사용자 집 위치를 입력받아 일반 회원가입을 진행합니다.")
     @ApiResponses ({
@@ -48,24 +49,66 @@ public class UserLoginController {
     public ResponseEntity<UserLoginResponseDto.UserLogin> loginUser(@ApiParam(value = "일반 로그인 정보", required = true) @RequestBody UserLoginRequestDto.UserLogin data) {
 
         if (userLoginService.loginUser(data)) {
-
-            Token token = tokenService.generateToken(data.getId(),"USER");
-
-            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", token.getRefreshToken())
-                    .maxAge(30 * 24 * 60 * 60) // 만료 기한
-                    .path("/")
-                    .secure(true)
-                    .httpOnly(true)
-                    .build();
-
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("Set-Cookie", refreshTokenCookie.toString());
-
-            userLoginService.storeRefreshToken(userRepository.findById(data.getId()).get(), token.getRefreshToken());
-
-            return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(UserLoginResponseDto.UserLogin.of(token.getAccessToken()));
+            return issueToken(data.getId());
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디 입니다.");
+    }
+
+    @ApiOperation(value = "Token 재발급", notes = "refreshToken을 사용하여 Token을 재발급 받습니다.")
+    @ApiResponses ({
+            @ApiResponse(code = 403, message = "유효하지 않은 토큰입니다."),
+            @ApiResponse(code = 403, message = "유효기간이 지난 토큰입니다."),
+            @ApiResponse(code = 403, message = "지원하지 않은 토큰입니다."),
+            @ApiResponse(code = 403, message = "빈 토큰입니다."),
+            @ApiResponse(code = 404, message = "해당하는 유저가 없습니다")
+    })
+    @PostMapping("/token")
+    public ResponseEntity<UserLoginResponseDto.UserLogin> reissueToken(@CookieValue(value = "refreshToken") Cookie cookie) {
+
+        tokenService.verifyToken(cookie.getValue());
+
+        User user = userLoginService.getUserByRefreshToken(cookie.getValue());
+
+        return issueToken(user.getId());
+    }
+
+    private ResponseEntity<UserLoginResponseDto.UserLogin> issueToken(String id) {
+
+        Token token = tokenService.generateToken(id,"USER");
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", token.getRefreshToken())
+                .maxAge(30 * 24 * 60 * 60) // 만료 기한
+                .path("/")
+//                .secure(true) // HTTPS 적용 후 사용할 것
+                .httpOnly(true)
+                .build();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Set-Cookie", refreshTokenCookie.toString());
+
+        userLoginService.storeRefreshToken(userLoginService.getUserById(id), token.getRefreshToken());
+
+        return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders)
+                .body(UserLoginResponseDto.UserLogin.of(token.getAccessToken()));
+    }
+
+    @ApiOperation(value = "로그아웃", notes = "refreshToken을 DB와 Cookie에서 삭제합니다. accessToken의 경우 프론트엔드에서 clear 해야합니다.")
+    @ApiResponses ({
+            @ApiResponse(code = 404, message = "AccessToken 안의 유저가 존재하지 않습니다.")
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest) {
+
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        userLoginService.logout(user);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", null)
+                .maxAge(0)
+                .path("/")
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
 
     @ApiOperation(value = "소셜 로그인", notes = "소셜 로그인 플랫폼을 입력받아 해당하는 플랫폼의 소셜 로그인을 진행합니다.")

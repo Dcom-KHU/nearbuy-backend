@@ -59,26 +59,6 @@ public class TokenService {
         );
     }
 
-    // refreshToken을 이용한 accessToken 생성
-    public Token generateOnlyAccessToken(String id, String role) {
-
-        long accessTokenPeriod = 1000L * 60L * 10L; // 10분
-
-        Claims claims = Jwts.claims();
-        claims.put("id", id);
-        claims.put("role", role);
-
-        Date now = new Date();
-        return Token.builder()
-                .accessToken(Jwts.builder()
-                        .setClaims(claims)
-                        .setIssuedAt(now)
-                        .setExpiration(new Date(now.getTime() + accessTokenPeriod))
-                        .signWith(SignatureAlgorithm.HS256, secretKey)
-                        .compact())
-                .build();
-    }
-
     // Token 유효성 검사
     public Boolean verifyToken(String token) {
         try {
