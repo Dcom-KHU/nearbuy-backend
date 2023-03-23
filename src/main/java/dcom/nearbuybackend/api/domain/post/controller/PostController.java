@@ -29,11 +29,21 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiOperation(value = "게시글 찜 여부 조회")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 삭제 접근 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @GetMapping("/like")
     public ResponseEntity<Boolean> getIsLiked(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
         return ResponseEntity.ok(postService.getIsLiked(httpServletRequest, id));
     }
 
+    @ApiOperation(value = "게시글 찜 등록 / 등록 해제")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 삭제 접근 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
     @PatchMapping("like")
     public ResponseEntity<Void> likePost(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
         postService.likePost(httpServletRequest, id);
