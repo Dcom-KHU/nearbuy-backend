@@ -5,10 +5,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,5 +27,16 @@ public class PostController {
         postService.deletePost(httpServletRequest, id);
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/like")
+    public ResponseEntity<Boolean> getIsLiked(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        return ResponseEntity.ok(postService.getIsLiked(httpServletRequest, id));
+    }
+
+    @PatchMapping("like")
+    public ResponseEntity<Void> likePost(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        postService.likePost(httpServletRequest, id);
+        return ResponseEntity.ok().build();
     }
 }
