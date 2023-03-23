@@ -25,16 +25,15 @@ public class PostService {
 
     // 게시글 삭제
     public void deletePost(HttpServletRequest httpServletRequest, Integer id) {
-        User user =  tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        Post post = postRepository.findById(id).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 게시물이 없습니다."));
+        Post post = postRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
 
-        if(user.equals(post.getWriter())) {
+        if (user.equals(post.getWriter())) {
             postRepository.deleteById(id);
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"게시물 삭제 접근 권한이 없습니다.");
+        } else
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "게시물 삭제 접근 권한이 없습니다.");
     }
 
     // 게시글 신고
