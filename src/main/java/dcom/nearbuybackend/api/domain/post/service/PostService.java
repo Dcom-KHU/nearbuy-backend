@@ -73,5 +73,27 @@ public class PostService {
         return false;
     }
 
+    // 게시글 찜 등록 / 등록 해제
+    public void likePost(HttpServletRequest httpServletRequest, Integer id) {
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        Post post = postRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
+
+        List<UserLike> userLikeList = userLikeRepository.findAllByUser(user);
+        for (UserLike userLike :
+                userLikeList) {
+            if (userLike.getPost().getId().equals(post.getId())) {
+                userLikeRepository.delete(userLike);
+                return;
+            }
+        }
+
+        UserLike userLike = new UserLike();
+        userLike.setPost(post);
+        userLike.setUser(user);
+
+        userLikeRepository.save(userLike);
+    }
 
 }
