@@ -33,6 +33,7 @@ public class UserLoginService {
                     .id(data.getId())
                     .name(data.getName())
                     .password(data.getPassword())
+                    .location(data.getLocation())
                     .mannerPoint(36.5)
                     .social(false)
                     .build();
@@ -59,6 +60,7 @@ public class UserLoginService {
         userRepository.save(user);
     }
 
+    // 로그아웃
     public void logout(User user) {
         user.setRefreshToken(null);
         userRepository.save(user);
