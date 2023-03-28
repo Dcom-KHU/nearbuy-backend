@@ -17,6 +17,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 @Service
@@ -47,14 +48,20 @@ public class ChatService {
 
     public Mono<Chat> sendChat(HttpServletRequest httpServletRequest, ChatRequestDto.sendChat sendChat) {
         User sender = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
-        int room = sendChat.getRoom();
+        Integer room = sendChat.getRoom();
         String message = sendChat.getMessage();
+
+        Flux<Chat> chatFlux = chatRepository.findAllByRoomAndUsers(room, sender.getId())
+                .subscribeOn(Schedulers.boundedElastic());
+        Stream<Chat> chatStream = chatFlux.toStream().peek(chat -> chat.setLast(false));
+        chatRepository.saveAll(Flux.fromStream(chatStream));
 
         Chat chat = new Chat();
         chat.setRoom(room);
         chat.setMessage(message);
         chat.setSender(sender.getName());
         chat.setTime(System.currentTimeMillis());
+        chat.setLast(true);
         return chatRepository.save(chat);
     }
 
