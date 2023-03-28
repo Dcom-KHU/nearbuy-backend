@@ -27,6 +27,11 @@ public class ChatController {
 
     private final ChatService chatService;
 
+    @PostMapping(value = "/enter")
+    public ResponseEntity<Mono<Chat>> enterChatRoom(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        return ResponseEntity.ok(chatService.enterChatRoom(httpServletRequest, id));
+    }
+
     @PostMapping(value = "/send")
     public ResponseEntity<Mono<Chat>> sendChat(HttpServletRequest httpServletRequest, @RequestBody ChatRequestDto.sendChat sendChat) {
         return ResponseEntity.ok(chatService.sendChat(httpServletRequest, sendChat));

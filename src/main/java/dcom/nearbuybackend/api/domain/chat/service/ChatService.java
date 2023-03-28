@@ -3,15 +3,20 @@ package dcom.nearbuybackend.api.domain.chat.service;
 import dcom.nearbuybackend.api.domain.chat.Chat;
 import dcom.nearbuybackend.api.domain.chat.dto.ChatRequestDto;
 import dcom.nearbuybackend.api.domain.chat.repository.ChatRepository;
+import dcom.nearbuybackend.api.domain.post.Post;
+import dcom.nearbuybackend.api.domain.post.repository.PostRepository;
 import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @Service
@@ -19,8 +24,26 @@ import javax.servlet.http.HttpServletRequest;
 public class ChatService {
 
     private final ChatRepository chatRepository;
+    private final PostRepository postRepository;
 
     private final TokenService tokenService;
+    private static Integer roomNumber;
+
+    public Mono<Chat> enterChatRoom(HttpServletRequest httpServletRequest, Integer id) {
+        User sender = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        Post post = postRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
+        User receiver = post.getWriter();
+        Chat chat = new Chat();
+        chat.setSender(sender.getName());
+        chat.setRoom(roomNumber++);
+        chat.setTime(System.currentTimeMillis());
+        chat.setUsers(String.join(",", List.of(sender.getName(), receiver.getName())));
+        chat.setMessage(sender.getName() + "님께서 입장하셨습니다.");
+        chat.setLast(true);
+        return chatRepository.save(chat);
+    }
 
     public Mono<Chat> sendChat(HttpServletRequest httpServletRequest, ChatRequestDto.sendChat sendChat) {
         User sender = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
