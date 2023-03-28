@@ -30,7 +30,7 @@ public class ChatService {
         Chat chat = new Chat();
         chat.setRoom(room);
         chat.setMessage(message);
-        chat.setSender(sender.getId());
+        chat.setSender(sender.getName());
         chat.setTime(System.currentTimeMillis());
         return chatRepository.save(chat);
     }
