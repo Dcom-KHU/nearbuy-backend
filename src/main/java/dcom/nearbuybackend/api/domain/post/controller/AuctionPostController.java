@@ -50,11 +50,12 @@ public class AuctionPostController {
 
     @ApiOperation(value = "경매 게시글 참여자 조회", notes = "경매 게시글 참여자를 조회합니다.")
     @ApiResponses({
+            @ApiResponse(code = 401, message = "경매 참여자 조회 접근 권한이 없습니다."),
             @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
     })
     @GetMapping("/participate")
-    public ResponseEntity<AuctionPostResponseDto.AuctionPostPeopleInfo> getAuctionPostPeople(@ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
-        return ResponseEntity.ok(auctionPostService.getAuctionPostPeople(id));
+    public ResponseEntity<AuctionPostResponseDto.AuctionPostPeopleInfo> getAuctionPostPeople(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
+        return ResponseEntity.ok(auctionPostService.getAuctionPostPeople(httpServletRequest, id));
     }
 
     @ApiOperation(value = "경매 게시글 참여", notes = "경매 게시글에 참여합니다. 현재가에 가격 단위를 합친 가격으로 경매에 참여합니다.")

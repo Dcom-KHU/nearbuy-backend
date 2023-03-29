@@ -2,10 +2,12 @@ package dcom.nearbuybackend.api.domain.post.service;
 
 import dcom.nearbuybackend.api.domain.post.AuctionPost;
 import dcom.nearbuybackend.api.domain.post.AuctionPostPeople;
+import dcom.nearbuybackend.api.domain.post.Post;
 import dcom.nearbuybackend.api.domain.post.dto.AuctionPostRequestDto;
 import dcom.nearbuybackend.api.domain.post.dto.AuctionPostResponseDto;
 import dcom.nearbuybackend.api.domain.post.repository.AuctionPostPeopleRepository;
 import dcom.nearbuybackend.api.domain.post.repository.AuctionPostRepository;
+import dcom.nearbuybackend.api.domain.post.repository.PostRepository;
 import dcom.nearbuybackend.api.domain.user.User;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class AuctionPostService {
     private final AuctionPostRepository auctionPostRepository;
     private final AuctionPostPeopleRepository auctionPostPeopleRepository;
     private final TokenService tokenService;
+    private final PostRepository postRepository;
 
     // 경매 게시글 조회
     public AuctionPostResponseDto.AuctionPostInfo getAuctionPost(Integer id) {
@@ -91,7 +94,16 @@ public class AuctionPostService {
     }
 
     // 경매 게시글 참여자 조회
-    public AuctionPostResponseDto.AuctionPostPeopleInfo getAuctionPostPeople(Integer post_id) {
+    public AuctionPostResponseDto.AuctionPostPeopleInfo getAuctionPostPeople(HttpServletRequest httpServletRequest, Integer post_id) {
+
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        Post post = postRepository.findById(post_id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
+
+        if(!user.equals(post.getWriter()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"경매 참여자 조회 접근 권한이 없습니다.");
+
         List<AuctionPostPeople> auctionPostPeople = auctionPostPeopleRepository.findAllByPostIdOrderByAuctionPriceDesc(post_id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
 
