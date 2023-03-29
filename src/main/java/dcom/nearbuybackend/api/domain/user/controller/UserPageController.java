@@ -57,8 +57,8 @@ public class UserPageController {
             @ApiResponse(code = 404, message = "해당하는 유저가 없습니다.")
     })
     @GetMapping("/page/my")
-    public ResponseEntity<UserPageResponseDto.MyPostInfo> getMyPost(HttpServletRequest httpServletRequest, @ApiParam(value = "유저 ID", required = true) @RequestParam String id) {
-        return ResponseEntity.ok(userPageService.getMyPost(httpServletRequest, id));
+    public ResponseEntity<UserPageResponseDto.MyPostInfo> getMyPost(@ApiParam(value = "유저 ID", required = true) @RequestParam String id) {
+        return ResponseEntity.ok(userPageService.getMyPost(id));
     }
 
     @ApiOperation(value = "유저 페이지 - 남이 게시한 글", notes = "입력받은 아이디에 해당하는 유저이 참여한 남의 게시글을 조회합니다.")
@@ -91,10 +91,10 @@ public class UserPageController {
 
     @ApiOperation(value = "유저 페이지 - 거래 후기 등록", notes = "[인증 필요] 입력받은 아이디에 해당하는 유저의 거래 후기를 등록합니다.")
     @PostMapping("/page/review")
-    public ResponseEntity<Void> registerUserReview(HttpServletRequest httpServletRequest,
+    public ResponseEntity<Void> registerUserReview(HttpServletRequest httpServletRequest, @ApiParam(value = "유저 ID", required = true) @RequestParam String id,
                                                    @ApiParam(value = "유저 거래 후기 정보", required = true) @RequestBody UserPageRequestDto.UserReviewRegister userReview) {
 
-        userPageService.registerUserReview(httpServletRequest, userReview);
+        userPageService.registerUserReview(httpServletRequest, id,  userReview);
         return ResponseEntity.ok().build();
     }
 }

@@ -12,9 +12,11 @@ import dcom.nearbuybackend.api.domain.user.repository.UserLikeRepository;
 import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import dcom.nearbuybackend.api.domain.user.repository.UserReviewRepository;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,22 +85,18 @@ public class UserPageService {
     }
 
     // 내가 게시한 글 조회
-    public UserPageResponseDto.MyPostInfo getMyPost(HttpServletRequest httpServletRequest, String id) {
+    public UserPageResponseDto.MyPostInfo getMyPost(String id) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
-        User me = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
-        if (!me.equals(user)) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "접근할 수 있는 권한이 없습니다.");
-        }
 
-        List<UserPageResponseDto.PostInfo> postList = getPostInfoList(me);
+        List<UserPageResponseDto.PostInfo> postList = getPostInfoList(user);
 
         return UserPageResponseDto.MyPostInfo.of(postList);
-
     }
 
+    // 내 게시글 리스트 조회
     private List<UserPageResponseDto.PostInfo> getPostInfoList(User user) {
-        List<Optional<Post>> userPost = postRepository.findAllByWriter_Id(user.getId());
+        List<Optional<Post>> userPost = postRepository.findAllByWriter(user);
         List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
         for (Optional<Post> optionalPost :
                 userPost) {
@@ -108,6 +106,7 @@ public class UserPageService {
         return postList;
     }
 
+    // 찜 게시글 리스트 조회
     private List<UserPageResponseDto.PostInfo> getLikedPostInfoList(List<UserLike> userLikeList) {
         List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
         for (UserLike userLike : userLikeList) {
@@ -116,6 +115,7 @@ public class UserPageService {
         return postList;
     }
 
+    // 게시글 조회
     private void getPostInfo(List<UserPageResponseDto.PostInfo> postList, Post post) {
         String type = post.getType();
 
@@ -134,6 +134,7 @@ public class UserPageService {
         }
     }
 
+    // 타인 게시글 조회
     public UserPageResponseDto.OthersPostInfo getOthersPost(String id) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
@@ -142,6 +143,7 @@ public class UserPageService {
 
         return UserPageResponseDto.OthersPostInfo.of(postList);
     }
+
 
     private static Integer getCurrentPeople(List<GroupPostPeople> participants) {
         Integer currentPeople = 0;
@@ -174,13 +176,27 @@ public class UserPageService {
         return UserPageResponseDto.UserReviewInfo.of(user, reviewInfoList);
     }
 
-    public void registerUserReview(HttpServletRequest httpServletRequest,
+    public void registerUserReview(HttpServletRequest httpServletRequest, String id,
                                    UserPageRequestDto.UserReviewRegister review) {
 
-        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+        User reviewer = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        User reviewee = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,"해당 유저가 존재하지 않습니다."));
 
         UserReview userReview = new UserReview();
-        userReview.setUser(user);
+
+        userReview.setUser(reviewee);
+
+        if(!review.getEmotion().equals("GOOD") && !review.getEmotion().equals("SOSO") && !review.getEmotion().equals("BAD"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "감정(GOOD, SOSO, BAD) 입력을 잘못 하셨습니다.");
+        else if(review.getEmotion().equals("GOOD")) {
+            reviewee.setMannerPoint(reviewee.getMannerPoint() + 0.5);
+        }
+        else if(review.getEmotion().equals("BAD")) {
+            reviewee.setMannerPoint(reviewee.getMannerPoint() - 0.5);
+        }
+
         userReview.setEmotion(review.getEmotion());
         userReview.setReply(review.getReply());
         userReview.setLocation(review.getLocation());
@@ -188,6 +204,21 @@ public class UserPageService {
         userReview.setManner(review.getManner());
         userReview.setDetail(review.getDetail());
 
+        Double totalScore = giveScoreUserReview(review.getReply())
+                + giveScoreUserReview(review.getTime())
+                + giveScoreUserReview(review.getLocation())
+                + giveScoreUserReview(review.getManner());
+
+        reviewee.setMannerPoint(reviewee.getMannerPoint() + totalScore);
+
+        userRepository.save(reviewee);
         userReviewRepository.save(userReview);
+    }
+
+    public Double giveScoreUserReview(Boolean item){
+        if(item)
+            return 0.1;
+        else
+            return -0.1;
     }
 }
