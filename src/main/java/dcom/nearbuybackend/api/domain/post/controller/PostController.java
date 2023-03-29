@@ -49,4 +49,13 @@ public class PostController {
         postService.likePost(httpServletRequest, id);
         return ResponseEntity.ok().build();
     }
+
+    @ApiOperation(value = "게시글 작성자 검증", notes = "[인증 필요] 해당하는 게시글 작성자인지 검증합니다.")
+    @GetMapping("/validate")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
+    public ResponseEntity<Boolean> validateWriter(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
+        return ResponseEntity.ok(postService.validateWriter(httpServletRequest, id));
+    }
 }

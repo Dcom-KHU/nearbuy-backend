@@ -96,4 +96,15 @@ public class PostService {
         userLikeRepository.save(userLike);
     }
 
+    public Boolean validateWriter(HttpServletRequest httpServletRequest, Integer id) {
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        Post post = postRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
+
+        if(user.equals(post.getWriter()))
+            return true;
+        else
+            return false;
+    }
 }
