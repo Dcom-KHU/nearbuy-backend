@@ -56,10 +56,7 @@ public class UserLoginController {
 
     @ApiOperation(value = "Token 재발급", notes = "refreshToken을 사용하여 Token을 재발급 받습니다.")
     @ApiResponses ({
-            @ApiResponse(code = 403, message = "유효하지 않은 토큰입니다."),
-            @ApiResponse(code = 403, message = "유효기간이 지난 토큰입니다."),
-            @ApiResponse(code = 403, message = "지원하지 않은 토큰입니다."),
-            @ApiResponse(code = 403, message = "빈 토큰입니다."),
+            @ApiResponse(code = 403, message = "유효하지 않거나 유효기간이 지났거나 지원하지 않거나 빈 토큰입니다."),
             @ApiResponse(code = 404, message = "해당하는 유저가 없습니다")
     })
     @PostMapping("/token")

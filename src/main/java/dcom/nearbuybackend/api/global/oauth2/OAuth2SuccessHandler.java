@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -51,7 +52,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         User user= userOptional.orElseGet(() -> userRepository.save(
                 User.builder()
                         .id(email)
-                        .name((String) oAuth2User.getAttribute("name"))
+                        .name((String) oAuth2User.getAttribute("name")+"_"+ UUID.randomUUID().toString())
                         .social(true)
                         .location("경희대학교")
                         .refreshToken(refreshTokenCookie.toString())
