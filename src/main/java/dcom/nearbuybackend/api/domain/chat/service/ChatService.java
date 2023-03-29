@@ -78,4 +78,9 @@ public class ChatService {
         Flux<Chat> chatList = chatRepository.findAllByUsers(user.getId());
         return chatList.subscribeOn(Schedulers.boundedElastic());
     }
+
+    public Mono<Chat> exitChatRoom(HttpServletRequest httpServletRequest, Integer room) {
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+        return null;
+    }
 }

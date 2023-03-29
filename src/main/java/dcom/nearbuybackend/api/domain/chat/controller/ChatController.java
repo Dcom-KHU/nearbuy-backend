@@ -37,6 +37,11 @@ public class ChatController {
         return ResponseEntity.ok(chatService.sendChat(httpServletRequest, sendChat));
     }
 
+    @PostMapping(value = "/exit")
+    public ResponseEntity<Mono<Chat>> exitChatRoom(HttpServletRequest httpServletRequest, @RequestParam Integer room) {
+        return ResponseEntity.ok(chatService.exitChatRoom(httpServletRequest, room));
+    }
+
     @GetMapping(value = "/list" ,produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<Flux<Chat>> getChatList(HttpServletRequest httpServletRequest, @RequestParam Integer room) {
         return ResponseEntity.ok(chatService.getChatList(httpServletRequest, room));
