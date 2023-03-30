@@ -12,10 +12,10 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, String> {
     // 유저가 속해있는 채팅방 별 채팅 목록 확인
     @Tailable
     @Query("{room: ?0, users: {$regex: ?1}}")
-    Flux<Chat> findAllByRoomAndUsers(Integer room, String userId);
+    Flux<Chat> findAllByRoomAndUsers(Integer room, String userName);
 
     // 유저가 속해있는 채팅방 각각의 마지막 채팅 목록 조회
     @Tailable
     @Query("{users: {$regex: ?0}, last: true}")
-    Flux<Chat> findAllByUsers(String userId);
+    Flux<Chat> findAllByUsers(String userName);
 }

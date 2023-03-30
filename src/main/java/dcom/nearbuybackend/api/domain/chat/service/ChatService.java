@@ -28,7 +28,7 @@ public class ChatService {
     private final PostRepository postRepository;
 
     private final TokenService tokenService;
-    private static Integer roomNumber;
+    private static Integer roomNumber = 1;
 
     public Mono<Chat> enterChatRoom(HttpServletRequest httpServletRequest, Integer id) {
         User sender = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
@@ -51,7 +51,7 @@ public class ChatService {
         Integer room = sendChat.getRoom();
         String message = sendChat.getMessage();
 
-        Flux<Chat> chatFlux = chatRepository.findAllByRoomAndUsers(room, sender.getId())
+        Flux<Chat> chatFlux = chatRepository.findAllByRoomAndUsers(room, sender.getName())
                 .subscribeOn(Schedulers.boundedElastic());
         Stream<Chat> chatStream = chatFlux.toStream().peek(chat -> chat.setLast(false));
         chatRepository.saveAll(Flux.fromStream(chatStream));
@@ -68,14 +68,14 @@ public class ChatService {
     // 유저가 속해있는 채팅방 별 채팅 목록 조회
     public Flux<Chat> getChatList(HttpServletRequest httpServletRequest, Integer room) {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
-        Flux<Chat> chatList = chatRepository.findAllByRoomAndUsers(room, user.getId());
+        Flux<Chat> chatList = chatRepository.findAllByRoomAndUsers(room, user.getName());
         return chatList.subscribeOn(Schedulers.boundedElastic());
     }
 
     // 유저가 속해있는 채팅방 각각의 마지막 채팅 목록 조회
     public Flux<Chat> getChatRoomList(HttpServletRequest httpServletRequest) {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
-        Flux<Chat> chatList = chatRepository.findAllByUsers(user.getId());
+        Flux<Chat> chatList = chatRepository.findAllByUsers(user.getName());
         return chatList.subscribeOn(Schedulers.boundedElastic());
     }
 

@@ -21,8 +21,6 @@ public class ChatController {
     use nearbuy
     db.createCollection("chat")
     db.runCommand({convertToCapped: "chat", size: 8192})
-
-    SSE(Server-Sent Events) Protocol은 postman에서 테스트 불가, 혹시라도 테스트해보고 싶으면 ChatRepository.java의 @Tailable 주석 처리하기
      */
 
     private final ChatService chatService;
