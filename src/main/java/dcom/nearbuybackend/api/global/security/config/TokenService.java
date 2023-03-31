@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 
@@ -61,18 +62,8 @@ public class TokenService {
 
     // Token 유효성 검사
     public Boolean verifyToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"유효하지 않은 토큰입니다.");
-        } catch (ExpiredJwtException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"유효기간이 지난 토큰입니다.");
-        } catch (UnsupportedJwtException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"지원하지 않은 토큰입니다.");
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"빈 토큰입니다.");
-        }
+        Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+        return true;
     }
 
     // Header에서 Token 추출
