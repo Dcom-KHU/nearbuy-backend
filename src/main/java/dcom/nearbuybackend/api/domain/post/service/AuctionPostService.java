@@ -36,7 +36,7 @@ public class AuctionPostService {
     }
 
     // 경매 게시글 등록
-    public void registerAuctionPost(HttpServletRequest httpServletRequest, AuctionPostRequestDto.AuctionPostRegister post) {
+    public Integer registerAuctionPost(HttpServletRequest httpServletRequest, AuctionPostRequestDto.AuctionPostRegister post) {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         String tagString = getJoinByComma(post.getTag());
@@ -56,7 +56,7 @@ public class AuctionPostService {
         auctionPost.setTime(System.currentTimeMillis());
         auctionPost.setCurrentPrice(post.getStartPrice());
 
-        auctionPostRepository.save(auctionPost);
+        return auctionPostRepository.save(auctionPost).getId();
     }
 
     private static String getJoinByComma(List<String> list) {

@@ -29,7 +29,7 @@ public class SalePostService {
     }
 
     // 판매 게시글 등록
-    public void registerSalePost(HttpServletRequest httpServletRequest, SalePostRequestDto.SalePostRegister post) {
+    public Integer registerSalePost(HttpServletRequest httpServletRequest, SalePostRequestDto.SalePostRegister post) {
         User user =  tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         String tagString = StringUtils.join(post.getTag(),',');
@@ -46,7 +46,7 @@ public class SalePostService {
         salePost.setTag(tagString);
         salePost.setSalePrice(post.getSalePrice());
 
-        salePostRepository.save(salePost);
+        return salePostRepository.save(salePost).getId();
     }
 
     // 판매 게시글 수정

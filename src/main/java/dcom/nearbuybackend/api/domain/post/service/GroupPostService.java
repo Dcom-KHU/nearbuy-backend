@@ -45,7 +45,7 @@ public class GroupPostService {
     /**
      * 공구 게시글 등록
      */
-    public void registerGroupPost(HttpServletRequest httpServletRequest, GroupPostRequestDto.GroupPostRegister post) {
+    public Integer registerGroupPost(HttpServletRequest httpServletRequest, GroupPostRequestDto.GroupPostRegister post) {
 
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
@@ -65,7 +65,7 @@ public class GroupPostService {
         groupPost.setDistribute(post.getDistribute());
         groupPost.setDay(post.getDay().stream().map(l -> Long.toString(l)).collect(Collectors.joining(",")));
 
-        groupPostRepository.save(groupPost);
+        return groupPostRepository.save(groupPost).getId();
     }
 
     private static String getJoinByComma(List<String> list) {

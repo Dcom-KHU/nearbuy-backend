@@ -31,7 +31,7 @@ public class ExchangePostService {
     }
 
     // 교환 게시글 등록
-    public void registerExchangePost(HttpServletRequest httpServletRequest, ExchangePostRequestDto.ExchangePostRegister post){
+    public Integer registerExchangePost(HttpServletRequest httpServletRequest, ExchangePostRequestDto.ExchangePostRegister post){
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         String tagString = getJoinByComma(post.getTag());
@@ -47,8 +47,7 @@ public class ExchangePostService {
         exchangePost.setTag(tagString);
         exchangePost.setTarget(post.getTarget());
 
-        exchangePostRepository.save(exchangePost);
-
+        return exchangePostRepository.save(exchangePost).getId();
     }
 
     private static String getJoinByComma(List<String> list) {

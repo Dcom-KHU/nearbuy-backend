@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = {"Group Post Controller"})
 @RequestMapping("/api/post/group")
@@ -33,11 +35,13 @@ public class GroupPostController {
 
     @ApiOperation(value = "공구 게시글 등록", notes = "[인증 필요] 공구 게시글 정보를 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> registerGroupPost(HttpServletRequest httpServletRequest,
-                                                  @ApiParam(value = "공구 게시글 등록 정보", required = true) @RequestBody GroupPostRequestDto.GroupPostRegister groupPost) {
+    public ResponseEntity<Map<String, Integer>> registerGroupPost(HttpServletRequest httpServletRequest,
+                                                                  @ApiParam(value = "공구 게시글 등록 정보", required = true) @RequestBody GroupPostRequestDto.GroupPostRegister groupPost) {
 
-        groupPostService.registerGroupPost(httpServletRequest, groupPost);
-        return ResponseEntity.ok().build();
+        Integer id = groupPostService.registerGroupPost(httpServletRequest, groupPost);
+        Map<String, Integer> data = new HashMap<>();
+        data.put("postId", id);
+        return ResponseEntity.ok().body(data);
     }
 
     @ApiOperation(value = "공구 게시글 수정", notes = "[인증 필요] 공구 게시글 정보를 수정합니다.")

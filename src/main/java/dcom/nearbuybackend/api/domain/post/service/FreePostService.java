@@ -35,7 +35,7 @@ public class FreePostService {
     /**
      * 나눔 게시글 등록
      */
-    public void registerFreePost(HttpServletRequest httpServletRequest, FreePostRequestDto.FreePostRegister post) {
+    public Integer registerFreePost(HttpServletRequest httpServletRequest, FreePostRequestDto.FreePostRegister post) {
 
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
@@ -49,7 +49,7 @@ public class FreePostService {
         freePost.setOngoing(true);
         freePost.setTag(getJoinByComma(post.getTag()));
 
-        freePostRepository.save(freePost);
+        return freePostRepository.save(freePost).getId();
     }
 
     private static String getJoinByComma(List<String> list) {
