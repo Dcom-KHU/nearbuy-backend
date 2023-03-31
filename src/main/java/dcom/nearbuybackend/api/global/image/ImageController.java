@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = {"Image Controller"})
 @RestController
@@ -56,5 +59,43 @@ public class ImageController {
     public ResponseEntity<Void> deleteUserImage(HttpServletRequest httpServletRequest) {
         imageService.deleteUserImage(httpServletRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "포스트 이미지 업로드", notes = "[인증 필요] 포스트의 이미지를 업로드합니다. 이미지의 타입은 jpg, png, gif로 제한됩니다.")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당 id의 게시글을 찾을 수 없습니다."),
+            @ApiResponse(code = 401, message = "게시물 접근 권한이 없습니다."),
+            @ApiResponse(code = 400, message = "이미지가 비어있습니다."),
+            @ApiResponse(code = 415, message = "미디어 타입을 알 수 없습니다."),
+            @ApiResponse(code = 415, message = "jpg, png, gif만 업로드할 수 있습니다.")
+    })
+    @PostMapping("/post")
+    public ResponseEntity<Map<String, Integer>> uploadPostImage(
+            HttpServletRequest httpServletRequest,
+            @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id,
+            @ApiParam(value = "포스트 이미지", required = true) @RequestParam List<MultipartFile> image
+    ) throws IOException {
+        imageService.uploadPostImage(httpServletRequest, id, image);
+        Map<String, Integer> data = new HashMap<>();
+        data.put("postId", id);
+        return ResponseEntity.ok().body(data);
+    }
+
+    @ApiOperation(value = "포스트 이미지 삭제", notes = "[인증 필요] 포스의 이미지를 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당 id의 게시글을 찾을 수 없습니다."),
+            @ApiResponse(code = 401, message = "게시물 접근 권한이 없습니다."),
+            @ApiResponse(code = 400, message = "index가 범위를 벗어났습니다."),
+            @ApiResponse(code = 404, message = "저장된 이미지 경로가 잘못되었습니다.")
+    })
+    @DeleteMapping("/post")
+    public ResponseEntity<Void> deletePostImage(
+            HttpServletRequest httpServletRequest,
+            @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id,
+            @ApiParam(value = "삭제할 이미지의 index", required = true) @RequestBody ImageRequestDto.PostImageDelete body
+    ) {
+        imageService.deletePostImage(httpServletRequest, id, body.getIndex());
+        return ResponseEntity.ok().build();
+
     }
 }
