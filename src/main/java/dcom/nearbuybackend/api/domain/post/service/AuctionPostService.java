@@ -39,7 +39,6 @@ public class AuctionPostService {
     public void registerAuctionPost(HttpServletRequest httpServletRequest, AuctionPostRequestDto.AuctionPostRegister post) {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        String imageString = getJoinByComma(post.getImage());
         String tagString = getJoinByComma(post.getTag());
 
         AuctionPost auctionPost = new AuctionPost();
@@ -48,7 +47,6 @@ public class AuctionPostService {
         auctionPost.setTitle(post.getTitle());
         auctionPost.setWriter(user);
         auctionPost.setDetail(post.getDetail());
-        auctionPost.setImage(imageString);
         auctionPost.setLocation(post.getLocation());
         auctionPost.setTag(tagString);
         auctionPost.setStartPrice(post.getStartPrice());
@@ -73,13 +71,11 @@ public class AuctionPostService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
 
         if (user.equals(auctionPost.getWriter())) {
-            String imageString = getJoinByComma(post.getImage());
             String tagString = getJoinByComma(post.getTag());
 
             auctionPost.setTitle(post.getTitle());
             auctionPost.setWriter(user);
             auctionPost.setDetail(post.getDetail());
-            auctionPost.setImage(imageString);
             auctionPost.setLocation(post.getLocation());
             auctionPost.setOngoing(post.getOngoing());
             auctionPost.setTag(tagString);

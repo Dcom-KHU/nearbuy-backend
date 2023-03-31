@@ -44,7 +44,6 @@ public class FreePostService {
         freePost.setTitle(post.getTitle());
         freePost.setWriter(user);
         freePost.setDetail(post.getDetail());
-        freePost.setImage(getJoinByComma(post.getImage()));
         freePost.setTime(System.currentTimeMillis());
         freePost.setLocation(post.getLocation());
         freePost.setOngoing(true);
@@ -69,12 +68,10 @@ public class FreePostService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 id의 게시글을 찾을 수 없습니다."));
 
         if (user.equals(freePost.getWriter())) {
-            String imageList = getJoinByComma(post.getImage());
             String tagList = getJoinByComma(post.getTag());
 
             freePost.setTitle(post.getTitle());
             freePost.setDetail(post.getDetail());
-            freePost.setImage(imageList);
             freePost.setLocation(post.getLocation());
             freePost.setOngoing(post.getOngoing());
             freePost.setTag(tagList);

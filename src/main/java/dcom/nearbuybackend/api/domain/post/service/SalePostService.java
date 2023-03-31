@@ -32,7 +32,6 @@ public class SalePostService {
     public void registerSalePost(HttpServletRequest httpServletRequest, SalePostRequestDto.SalePostRegister post) {
         User user =  tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        String imageString = StringUtils.join(post.getImage(),',');
         String tagString = StringUtils.join(post.getTag(),',');
 
         SalePost salePost = new SalePost();
@@ -41,7 +40,6 @@ public class SalePostService {
         salePost.setTitle(post.getTitle());
         salePost.setWriter(user);
         salePost.setDetail(post.getDetail());
-        salePost.setImage(imageString);
         salePost.setTime(System.currentTimeMillis());
         salePost.setLocation(post.getLocation());
         salePost.setOngoing(true);
@@ -55,7 +53,6 @@ public class SalePostService {
     public void modifySalePost(HttpServletRequest httpServletRequest, Integer id, SalePostRequestDto.SalePostModify post) {
         User user =  tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        String imageString = StringUtils.join(post.getImage(),',');
         String tagString = StringUtils.join(post.getTag(),',');
 
         SalePost salePost = salePostRepository.findById(id).orElseThrow(()->
@@ -64,7 +61,6 @@ public class SalePostService {
         if(user.equals(salePost.getWriter())) {
             salePost.setTitle(post.getTitle());
             salePost.setDetail(post.getDetail());
-            salePost.setImage(imageString);
             salePost.setLocation(post.getLocation());
             salePost.setOngoing(post.getOngoing());
             salePost.setTag(tagString);

@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +55,6 @@ public class GroupPostService {
         groupPost.setTitle(post.getTitle());
         groupPost.setWriter(user);
         groupPost.setDetail(post.getDetail());
-        groupPost.setImage(getJoinByComma(post.getImage()));
         groupPost.setTime(System.currentTimeMillis());
         groupPost.setLocation(post.getLocation());
         groupPost.setOngoing(true);
@@ -85,12 +85,10 @@ public class GroupPostService {
         );
 
         if (user.equals(groupPost.getWriter())) {
-            String imageList = getJoinByComma(post.getImage());
             String tagList = getJoinByComma(post.getTag());
 
             groupPost.setTitle(post.getTitle());
             groupPost.setDetail(post.getDetail());
-            groupPost.setImage(imageList);
             groupPost.setLocation(post.getLocation());
             groupPost.setOngoing(post.getOngoing());
             groupPost.setTag(tagList);
@@ -119,7 +117,7 @@ public class GroupPostService {
         });
 
 
-        if (groupPost.getTotalPeople() == groupPost.getCurrentPeople())
+        if (Objects.equals(groupPost.getTotalPeople(), groupPost.getCurrentPeople()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"공구 인원이 꽉 찼습니다.");
         else
             groupPost.setCurrentPeople(groupPost.getCurrentPeople() + 1);

@@ -34,7 +34,6 @@ public class ExchangePostService {
     public void registerExchangePost(HttpServletRequest httpServletRequest, ExchangePostRequestDto.ExchangePostRegister post){
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        String imageString = getJoinByComma(post.getImage());
         String tagString = getJoinByComma(post.getTag());
 
         ExchangePost exchangePost = new ExchangePost();
@@ -42,7 +41,6 @@ public class ExchangePostService {
         exchangePost.setTitle(post.getTitle());
         exchangePost.setWriter(user);
         exchangePost.setDetail(post.getDetail());
-        exchangePost.setImage(imageString);
         exchangePost.setTime(System.currentTimeMillis());
         exchangePost.setLocation(post.getLocation());
         exchangePost.setOngoing(true);
@@ -64,12 +62,10 @@ public class ExchangePostService {
         ExchangePost newExchangePost = exchangePostRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
         if (user.equals(newExchangePost.getWriter())) {
-            String imageList = getJoinByComma(post.getImage());
             String tagList = getJoinByComma(post.getTag());
 
             newExchangePost.setTitle(post.getTitle());
             newExchangePost.setDetail(post.getDetail());
-            newExchangePost.setImage(imageList);
             newExchangePost.setLocation(post.getLocation());
             newExchangePost.setOngoing(post.getOngoing());
             newExchangePost.setTag(tagList);
