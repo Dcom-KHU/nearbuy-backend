@@ -35,7 +35,7 @@ public class FreePostService {
     /**
      * 나눔 게시글 등록
      */
-    public void registerFreePost(HttpServletRequest httpServletRequest, FreePostRequestDto.FreePostRegister post) {
+    public Integer registerFreePost(HttpServletRequest httpServletRequest, FreePostRequestDto.FreePostRegister post) {
 
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
@@ -44,13 +44,12 @@ public class FreePostService {
         freePost.setTitle(post.getTitle());
         freePost.setWriter(user);
         freePost.setDetail(post.getDetail());
-        freePost.setImage(getJoinByComma(post.getImage()));
         freePost.setTime(System.currentTimeMillis());
         freePost.setLocation(post.getLocation());
         freePost.setOngoing(true);
         freePost.setTag(getJoinByComma(post.getTag()));
 
-        freePostRepository.save(freePost);
+        return freePostRepository.save(freePost).getId();
     }
 
     private static String getJoinByComma(List<String> list) {
@@ -69,12 +68,10 @@ public class FreePostService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 id의 게시글을 찾을 수 없습니다."));
 
         if (user.equals(freePost.getWriter())) {
-            String imageList = getJoinByComma(post.getImage());
             String tagList = getJoinByComma(post.getTag());
 
             freePost.setTitle(post.getTitle());
             freePost.setDetail(post.getDetail());
-            freePost.setImage(imageList);
             freePost.setLocation(post.getLocation());
             freePost.setOngoing(post.getOngoing());
             freePost.setTag(tagList);

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = {"Auction Post Controller"})
 @RestController
@@ -30,10 +32,11 @@ public class AuctionPostController {
 
     @ApiOperation(value = "경매 게시글 등록", notes = "[인증 필요] 경매 게시글 정보를 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> registerAuctionPost(HttpServletRequest httpServletRequest, @ApiParam(value = "경매 게시글 등록 정보", required = true) @RequestBody AuctionPostRequestDto.AuctionPostRegister auctionPost) {
-        auctionPostService.registerAuctionPost(httpServletRequest, auctionPost);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, Integer>> registerAuctionPost(HttpServletRequest httpServletRequest, @ApiParam(value = "경매 게시글 등록 정보", required = true) @RequestBody AuctionPostRequestDto.AuctionPostRegister auctionPost) {
+        Integer id = auctionPostService.registerAuctionPost(httpServletRequest, auctionPost);
+        Map<String, Integer> data = new HashMap<>();
+        data.put("postId", id);
+        return ResponseEntity.ok().body(data);
     }
 
     @ApiOperation(value = "경매 게시글 등록", notes = "[인증 필요] 경매 게시글 정보를 수정합니다.")

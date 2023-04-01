@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = {"Sale Post Controller"})
 @RestController
@@ -27,10 +29,11 @@ public class SalePostController {
 
     @ApiOperation(value = "판매 게시글 등록", notes = "[인증 필요]판매 게시글을 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> registerSalePost(HttpServletRequest httpServletRequest, @ApiParam(value = "판매 게시글 등록 정보", required = true) @RequestBody SalePostRequestDto.SalePostRegister post) {
-        salePostService.registerSalePost(httpServletRequest, post);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<Map<String, Integer>> registerSalePost(HttpServletRequest httpServletRequest, @ApiParam(value = "판매 게시글 등록 정보", required = true) @RequestBody SalePostRequestDto.SalePostRegister post) {
+        Integer id = salePostService.registerSalePost(httpServletRequest, post);
+        Map<String, Integer> data = new HashMap<>();
+        data.put("postId", id);
+        return ResponseEntity.ok().body(data);
     }
 
     @ApiOperation(value = "판매 게시글 수정", notes = "[인증 필요]판매 게시글을 수정합니다.")

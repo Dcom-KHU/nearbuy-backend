@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = {"Free Post Controller"})
 @RequestMapping("/api/post/free")
@@ -32,11 +34,13 @@ public class FreePostController {
 
     @ApiOperation(value = "나눔 게시글 등록", notes = "[인증 필요] 나눔 게시글 정보를 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> registerFreePost(HttpServletRequest httpServletRequest,
-                                                 @ApiParam(value = "나눔 게시글 등록 정보", required = true) @RequestBody FreePostRequestDto.FreePostRegister freePost) {
+    public ResponseEntity<Map<String, Integer>> registerFreePost(HttpServletRequest httpServletRequest,
+                                                                 @ApiParam(value = "나눔 게시글 등록 정보", required = true) @RequestBody FreePostRequestDto.FreePostRegister freePost) {
 
-        freePostService.registerFreePost(httpServletRequest, freePost);
-        return ResponseEntity.ok().build();
+        Integer id = freePostService.registerFreePost(httpServletRequest, freePost);
+        Map<String, Integer> data = new HashMap<>();
+        data.put("postId", id);
+        return ResponseEntity.ok().body(data);
     }
 
     @ApiOperation(value = "나눔 게시글 수정", notes = "[인증 필요] 나눔 게시글 정보를 수정합니다.")

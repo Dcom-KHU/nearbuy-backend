@@ -16,8 +16,6 @@ public class FreePostRequestDto {
         private String title;
         @ApiModelProperty(value = "게시글 내용")
         private String detail;
-        @ApiModelProperty(value = "게시글 이미지")
-        private List<String> image;
         @ApiModelProperty(value = "게시글 위치")
         private String location;
         @ApiModelProperty(value = "게시글 태그")
@@ -32,8 +30,6 @@ public class FreePostRequestDto {
         private String title;
         @ApiModelProperty(value = "게시글 내용")
         private String detail;
-        @ApiModelProperty(value = "게시글 이미지")
-        private List<String> image;
         @ApiModelProperty(value = "게시글 위치")
         private String location;
         @ApiModelProperty(value = "게시글 진행여부")
