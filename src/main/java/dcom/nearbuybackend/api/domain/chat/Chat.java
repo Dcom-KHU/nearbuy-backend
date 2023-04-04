@@ -4,8 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 @Document(collection="chat")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,14 +17,18 @@ public class Chat {
 
     private Integer room;
 
-    private String users;
-
     private String sender;
+
+    private String receiver;
 
     private String message;
 
     private Long time;
 
     private Boolean last;
+
+    private Boolean senderIn;
+
+    private Boolean receiverIn;
 }
 
