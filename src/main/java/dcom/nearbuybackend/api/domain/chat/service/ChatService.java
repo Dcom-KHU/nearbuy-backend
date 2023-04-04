@@ -11,10 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static dcom.nearbuybackend.api.global.websocket.WebSocketHandler.userSession;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +49,12 @@ public class ChatService {
         return ChatResponseDto.ChatRoomList.of(chatRoomList);
     }
 
+    public void getChatRoomListSocket(WebSocketSession session, String accessToken) {
+        User user = tokenService.getUserByToken(accessToken);
+
+        userSession.put(user.getName(),session);
+    }
+
     public void enterChatRoom(HttpServletRequest httpServletRequest, Integer id) {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
@@ -65,7 +76,7 @@ public class ChatService {
         chatRepository.save(chat);
     }
 
-    public void sendMessage(HttpServletRequest httpServletRequest, Integer room, String message) {
+    public void sendMessage(HttpServletRequest httpServletRequest, Integer room, String message) throws IOException {
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
         Chat lastChat = chatRepository.findFirstByRoomOrderByTimeDesc(room);
@@ -83,6 +94,11 @@ public class ChatService {
 
         chatRepository.save(lastChat);
         chatRepository.save(chat);
+
+        for(String receiver : lastChat.getUserList()) {
+            if(userSession.containsKey(receiver))
+                userSession.get(receiver).sendMessage(new TextMessage(chat.toString()));
+        }
     }
 
     public void exitChatRoom(HttpServletRequest httpServletRequest, Integer room) {
