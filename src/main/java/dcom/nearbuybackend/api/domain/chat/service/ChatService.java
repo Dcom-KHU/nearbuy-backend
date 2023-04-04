@@ -95,9 +95,17 @@ public class ChatService {
         chatRepository.save(lastChat);
         chatRepository.save(chat);
 
+        String chatMessage = "{\"id\": \"" + chat.getId() + "\","
+                + "\"room\": \"" + chat.getRoom() +"\","
+                + "\"sender\": \"" + chat.getSender() +"\","
+                + "\"userList\": \"" + chat.getUserList() +"\","
+                + "\"message\": \"" + chat.getMessage() +"\","
+                + "\"time\": \"" + chat.getTime() +"\","
+                + "\"last\": \"" + chat.getLast() +"\"}";
+
         for(String receiver : lastChat.getUserList()) {
             if(userSession.containsKey(receiver))
-                userSession.get(receiver).sendMessage(new TextMessage(chat.toString()));
+                userSession.get(receiver).sendMessage(new TextMessage(chatMessage));
         }
     }
 
