@@ -16,8 +16,6 @@ public class GroupPostRequestDto {
         private String title;
         @ApiModelProperty(value = "게시글 내용")
         private String detail;
-        @ApiModelProperty(value = "게시글 이미지")
-        private List<String> image;
         @ApiModelProperty(value = "게시글 위치")
         private String location;
         @ApiModelProperty(value = "게시글 태그")
@@ -26,7 +24,7 @@ public class GroupPostRequestDto {
         private Integer groupPrice;
         @ApiModelProperty(value = "[공구] 게시글 총 인원")
         private Integer totalPeople;
-        @ApiModelProperty(value = "[공구] 게시글 공구 방식")
+        @ApiModelProperty(value = "[공구] 게시글 공구 방식(DIRECT, POST)")
         private String distribute;
         @ApiModelProperty(value = "[공구] 게시글 공구 날짜")
         private List<Long> day;
@@ -40,8 +38,6 @@ public class GroupPostRequestDto {
         private String title;
         @ApiModelProperty(value = "게시글 내용")
         private String detail;
-        @ApiModelProperty(value = "게시글 이미지")
-        private List<String> image;
         @ApiModelProperty(value = "게시글 위치")
         private String location;
         @ApiModelProperty(value = "게시글 진행여부")

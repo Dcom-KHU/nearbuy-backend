@@ -19,6 +19,9 @@ public class GroupPost extends Post {
     private Integer totalPeople;
 
     @Column
+    private Integer currentPeople;
+
+    @Column
     private String distribute;
 
     @Column

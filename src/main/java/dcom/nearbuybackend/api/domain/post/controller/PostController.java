@@ -5,10 +5,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,5 +27,35 @@ public class PostController {
         postService.deletePost(httpServletRequest, id);
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation(value = "게시글 찜 여부 조회")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 삭제 접근 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
+    @GetMapping("/like")
+    public ResponseEntity<Boolean> getIsLiked(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        return ResponseEntity.ok(postService.getIsLiked(httpServletRequest, id));
+    }
+
+    @ApiOperation(value = "게시글 찜 등록 / 등록 해제")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "게시물 삭제 접근 권한이 없습니다."),
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
+    @PatchMapping("like")
+    public ResponseEntity<Void> likePost(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        postService.likePost(httpServletRequest, id);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "게시글 작성자 검증", notes = "[인증 필요] 해당하는 게시글 작성자인지 검증합니다.")
+    @GetMapping("/validate")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
+    public ResponseEntity<Boolean> validateWriter(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
+        return ResponseEntity.ok(postService.validateWriter(httpServletRequest, id));
     }
 }

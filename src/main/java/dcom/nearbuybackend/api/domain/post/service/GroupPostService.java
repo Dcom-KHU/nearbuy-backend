@@ -1,5 +1,8 @@
 package dcom.nearbuybackend.api.domain.post.service;
 
+import dcom.nearbuybackend.api.domain.chat.Chat;
+import dcom.nearbuybackend.api.domain.chat.repository.ChatRepository;
+import dcom.nearbuybackend.api.domain.post.AuctionPost;
 import dcom.nearbuybackend.api.domain.post.GroupPost;
 import dcom.nearbuybackend.api.domain.post.GroupPostPeople;
 import dcom.nearbuybackend.api.domain.post.dto.GroupPostPeopleResponseDto;
@@ -18,7 +21,10 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static dcom.nearbuybackend.api.domain.chat.service.ChatService.room;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class GroupPostService {
     private final TokenService tokenService;
     private final GroupPostPeopleRepository groupPostPeopleRepository;
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     /**
      * 공구 게시글 조회
@@ -44,7 +51,7 @@ public class GroupPostService {
     /**
      * 공구 게시글 등록
      */
-    public void registerGroupPost(HttpServletRequest httpServletRequest, GroupPostRequestDto.GroupPostRegister post) {
+    public Integer registerGroupPost(HttpServletRequest httpServletRequest, GroupPostRequestDto.GroupPostRegister post) {
 
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
@@ -54,17 +61,17 @@ public class GroupPostService {
         groupPost.setTitle(post.getTitle());
         groupPost.setWriter(user);
         groupPost.setDetail(post.getDetail());
-        groupPost.setImage(getJoinByComma(post.getImage()));
         groupPost.setTime(System.currentTimeMillis());
         groupPost.setLocation(post.getLocation());
         groupPost.setOngoing(true);
         groupPost.setTag(getJoinByComma(post.getTag()));
         groupPost.setGroupPrice(post.getGroupPrice());
         groupPost.setTotalPeople(post.getTotalPeople());
+        groupPost.setCurrentPeople(1);
         groupPost.setDistribute(post.getDistribute());
         groupPost.setDay(post.getDay().stream().map(l -> Long.toString(l)).collect(Collectors.joining(",")));
 
-        groupPostRepository.save(groupPost);
+        return groupPostRepository.save(groupPost).getId();
     }
 
     private static String getJoinByComma(List<String> list) {
@@ -84,12 +91,10 @@ public class GroupPostService {
         );
 
         if (user.equals(groupPost.getWriter())) {
-            String imageList = getJoinByComma(post.getImage());
             String tagList = getJoinByComma(post.getTag());
 
             groupPost.setTitle(post.getTitle());
             groupPost.setDetail(post.getDetail());
-            groupPost.setImage(imageList);
             groupPost.setLocation(post.getLocation());
             groupPost.setOngoing(post.getOngoing());
             groupPost.setTag(tagList);
@@ -117,11 +122,18 @@ public class GroupPostService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "해당 게시글에 이미 참여한 user 입니다.");
         });
 
+
+        if (Objects.equals(groupPost.getTotalPeople(), groupPost.getCurrentPeople()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"공구 인원이 꽉 찼습니다.");
+        else
+            groupPost.setCurrentPeople(groupPost.getCurrentPeople() + 1);
+
         GroupPostPeople groupPostPeople = new GroupPostPeople();
         groupPostPeople.setPost(groupPost);
         groupPostPeople.setUser(user);
         groupPostPeople.setParticipate(true);
 
+        groupPostRepository.save(groupPost);
         groupPostPeopleRepository.save(groupPostPeople);
     }
 
@@ -178,5 +190,36 @@ public class GroupPostService {
         groupPostPeople.setParticipate(false);
 
         groupPostPeopleRepository.save(groupPostPeople);
+    }
+
+    public void finishGroupPost(HttpServletRequest httpServletRequest, Integer id) {
+        GroupPost groupPost = groupPostRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다"));
+
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        if(!user.equals(groupPost.getWriter()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"경매 참여자 낙찰 접근 권한이 없습니다.");
+
+        List<String> userList = new ArrayList<>();
+        userList.add(user.getName());
+
+        List<GroupPostPeople> groupPostPeopleList = groupPostPeopleRepository.findByPost(groupPost);
+
+        for(GroupPostPeople g : groupPostPeopleList) {
+            if(g.getParticipate().equals(true)) {
+                userList.add(g.getUser().getName());
+            }
+        }
+
+        Chat chat = Chat.builder()
+                .room(room++)
+                .userList(userList)
+                .message("[SYSTEM]" + userList.toString() + " 님이 입장하셨습니다.")
+                .time(System.currentTimeMillis())
+                .last(true)
+                .build();
+
+        chatRepository.save(chat);
     }
 }

@@ -4,8 +4,10 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
 
 @Document(collection="chat")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,9 +19,9 @@ public class Chat {
 
     private Integer room;
 
-    private String users;
-
     private String sender;
+
+    private List<String> userList;
 
     private String message;
 

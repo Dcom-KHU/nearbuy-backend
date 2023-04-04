@@ -1,21 +1,20 @@
 package dcom.nearbuybackend.api.domain.chat.repository;
 
 import dcom.nearbuybackend.api.domain.chat.Chat;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import org.springframework.data.mongodb.repository.Tailable;
-import reactor.core.publisher.Flux;
 
-public interface ChatRepository extends ReactiveMongoRepository<Chat, String> {
+import java.util.List;
+
+public interface ChatRepository extends MongoRepository<Chat, String> {
 
     // 유저가 속해있는 채팅방 별 채팅 목록 확인
-    @Tailable
-    @Query("{room: ?0, users: {$regex: ?1}}")
-    Flux<Chat> findAllByRoomAndUsers(Integer room, String userId);
+    @Query("{room: ?0, userList: {$in: [?1]}}")
+    List<Chat> findAllByRoomAndUser(Integer room, String user);
 
     // 유저가 속해있는 채팅방 각각의 마지막 채팅 목록 조회
-    @Tailable
-    @Query("{users: {$regex: ?0}, last: true}")
-    Flux<Chat> findAllByUsers(String userId);
+    @Query("{userList: {$in: [?0]}, last: true}")
+    List<Chat> findAllByUser(String user);
+
+    Chat findFirstByRoomOrderByTimeDesc(Integer room);
 }
