@@ -74,10 +74,9 @@ public class AuctionPostController {
 
     @ApiOperation("경매 게시글 낙찰")
     @GetMapping("/finish")
-    public ResponseEntity<Void> getSuccessAuctionPost() {
-        // 아직 미구현
+    public ResponseEntity<Void> finishAuctionPost(HttpServletRequest httpServletRequest, @RequestParam Integer id, @RequestParam String name) {
+        auctionPostService.finishAuctionPost(httpServletRequest, id, name);
         return ResponseEntity.ok().build();
     }
-
 }
 

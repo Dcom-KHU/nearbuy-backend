@@ -92,4 +92,11 @@ public class GroupPostController {
         groupPostService.refuseGroupPostPeople(httpServletRequest, id, name);
         return ResponseEntity.ok().build();
     }
+
+    @ApiOperation("경매 게시글 낙찰")
+    @GetMapping("/finish")
+    public ResponseEntity<Void> finishGroupPost(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        groupPostService.finishGroupPost(httpServletRequest, id);
+        return ResponseEntity.ok().build();
+    }
 }

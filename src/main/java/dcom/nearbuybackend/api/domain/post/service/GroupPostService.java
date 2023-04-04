@@ -1,5 +1,8 @@
 package dcom.nearbuybackend.api.domain.post.service;
 
+import dcom.nearbuybackend.api.domain.chat.Chat;
+import dcom.nearbuybackend.api.domain.chat.repository.ChatRepository;
+import dcom.nearbuybackend.api.domain.post.AuctionPost;
 import dcom.nearbuybackend.api.domain.post.GroupPost;
 import dcom.nearbuybackend.api.domain.post.GroupPostPeople;
 import dcom.nearbuybackend.api.domain.post.dto.GroupPostPeopleResponseDto;
@@ -21,6 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static dcom.nearbuybackend.api.domain.chat.service.ChatService.room;
+
 @Service
 @RequiredArgsConstructor
 public class GroupPostService {
@@ -29,6 +34,7 @@ public class GroupPostService {
     private final TokenService tokenService;
     private final GroupPostPeopleRepository groupPostPeopleRepository;
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     /**
      * 공구 게시글 조회
@@ -184,5 +190,36 @@ public class GroupPostService {
         groupPostPeople.setParticipate(false);
 
         groupPostPeopleRepository.save(groupPostPeople);
+    }
+
+    public void finishGroupPost(HttpServletRequest httpServletRequest, Integer id) {
+        GroupPost groupPost = groupPostRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다"));
+
+        User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        if(!user.equals(groupPost.getWriter()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"경매 참여자 낙찰 접근 권한이 없습니다.");
+
+        List<String> userList = new ArrayList<>();
+        userList.add(user.getName());
+
+        List<GroupPostPeople> groupPostPeopleList = groupPostPeopleRepository.findByPost(groupPost);
+
+        for(GroupPostPeople g : groupPostPeopleList) {
+            if(g.getParticipate().equals(true)) {
+                userList.add(g.getUser().getName());
+            }
+        }
+
+        Chat chat = Chat.builder()
+                .room(room++)
+                .userList(userList)
+                .message("[SYSTEM]" + userList.toString() + " 님이 입장하셨습니다.")
+                .time(System.currentTimeMillis())
+                .last(true)
+                .build();
+
+        chatRepository.save(chat);
     }
 }

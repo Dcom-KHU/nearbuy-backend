@@ -29,7 +29,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final PostRepository postRepository;
 
-    private static Integer room = 1;
+    public static Integer room = 1;
 
     // 유저가 속해있는 채팅방 별 채팅 목록 조회
     public List<ChatResponseDto.ChatList> getChatList(HttpServletRequest httpServletRequest, Integer room) {

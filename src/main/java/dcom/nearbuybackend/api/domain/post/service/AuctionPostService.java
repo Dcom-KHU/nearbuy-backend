@@ -1,5 +1,7 @@
 package dcom.nearbuybackend.api.domain.post.service;
 
+import dcom.nearbuybackend.api.domain.chat.Chat;
+import dcom.nearbuybackend.api.domain.chat.repository.ChatRepository;
 import dcom.nearbuybackend.api.domain.post.AuctionPost;
 import dcom.nearbuybackend.api.domain.post.AuctionPostPeople;
 import dcom.nearbuybackend.api.domain.post.Post;
@@ -9,6 +11,7 @@ import dcom.nearbuybackend.api.domain.post.repository.AuctionPostPeopleRepositor
 import dcom.nearbuybackend.api.domain.post.repository.AuctionPostRepository;
 import dcom.nearbuybackend.api.domain.post.repository.PostRepository;
 import dcom.nearbuybackend.api.domain.user.User;
+import dcom.nearbuybackend.api.domain.user.repository.UserRepository;
 import dcom.nearbuybackend.api.global.security.config.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dcom.nearbuybackend.api.domain.chat.service.ChatService.room;
+
 @Service
 @RequiredArgsConstructor
 public class AuctionPostService {
@@ -26,6 +31,8 @@ public class AuctionPostService {
     private final AuctionPostPeopleRepository auctionPostPeopleRepository;
     private final TokenService tokenService;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     // 경매 게시글 조회
     public AuctionPostResponseDto.AuctionPostInfo getAuctionPost(Integer id) {
@@ -139,4 +146,30 @@ public class AuctionPostService {
         auctionPostRepository.save(auctionPost);
     }
 
+    public void finishAuctionPost(HttpServletRequest httpServletRequest, Integer id, String name) {
+        AuctionPost auctionPost = auctionPostRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다"));
+
+        User user1 = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
+
+        if(!user1.equals(auctionPost.getWriter()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"경매 참여자 낙찰 접근 권한이 없습니다.");
+
+        User user2 = userRepository.findByName(name).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
+
+        List<String> userList = new ArrayList<>();
+        userList.add(user1.getName());
+        userList.add(user2.getName());
+
+        Chat chat = Chat.builder()
+                .room(room++)
+                .userList(userList)
+                .message("[SYSTEM]" + user1.getName() + ", " + user2.getName() + " 님이 입장하셨습니다.")
+                .time(System.currentTimeMillis())
+                .last(true)
+                .build();
+
+        chatRepository.save(chat);
+    }
 }
