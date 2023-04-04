@@ -25,4 +25,22 @@ public class ChatController {
     public ResponseEntity<List<ChatResponseDto.ChatRoomList>> getChatRoomList(HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(chatService.getChatRoomList(httpServletRequest));
     }
+
+    @PostMapping("/enter")
+    public ResponseEntity<Void> enterChatRoom(HttpServletRequest httpServletRequest, @RequestParam Integer id) {
+        chatService.enterChatRoom(httpServletRequest, id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<Void> sendMessage(HttpServletRequest httpServletRequest, @RequestParam Integer room, @RequestParam String message) {
+        chatService.sendMessage(httpServletRequest, room, message);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/exit")
+    public ResponseEntity<Void> exitChatRoom(HttpServletRequest httpServletRequest, @RequestParam Integer room) {
+        chatService.exitChatRoom(httpServletRequest, room);
+        return ResponseEntity.ok().build();
+    }
 }

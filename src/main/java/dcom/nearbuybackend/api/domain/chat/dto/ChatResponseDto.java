@@ -20,24 +20,20 @@ public class ChatResponseDto {
         private String id;
         private Integer room;
         private String sender;
-        private String receiver;
+        private List<String> userList;
         private String message;
         private Long time;
         private Boolean last;
-        private Boolean senderOut;
-        private Boolean receiverOut;
 
         public static ChatList of(Chat chat) {
             return ChatList.builder()
                     .id(chat.getId())
                     .room(chat.getRoom())
                     .sender(chat.getSender())
-                    .receiver(chat.getReceiver())
+                    .userList(chat.getUserList())
                     .message(chat.getMessage())
                     .time(chat.getTime())
                     .last(chat.getLast())
-                    .senderOut(chat.getSenderIn())
-                    .receiverOut(chat.getReceiverIn())
                     .build();
         }
 

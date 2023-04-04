@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection="chat")
 @Builder
 @Getter
@@ -19,16 +21,12 @@ public class Chat {
 
     private String sender;
 
-    private String receiver;
+    private List<String> userList;
 
     private String message;
 
     private Long time;
 
     private Boolean last;
-
-    private Boolean senderIn;
-
-    private Boolean receiverIn;
 }
 
