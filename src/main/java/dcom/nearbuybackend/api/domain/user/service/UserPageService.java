@@ -1,5 +1,7 @@
 package dcom.nearbuybackend.api.domain.user.service;
 
+import dcom.nearbuybackend.api.domain.chat.Chat;
+import dcom.nearbuybackend.api.domain.chat.repository.ChatRepository;
 import dcom.nearbuybackend.api.domain.post.GroupPostPeople;
 import dcom.nearbuybackend.api.domain.post.Post;
 import dcom.nearbuybackend.api.domain.post.repository.*;
@@ -38,6 +40,7 @@ public class UserPageService {
     private final AuctionPostRepository auctionPostRepository;
     private final GroupPostRepository groupPostRepository;
     private final GroupPostPeopleRepository groupPostPeopleRepository;
+    private final ChatRepository chatRepository;
 
     private final TokenService tokenService;
 
@@ -139,7 +142,16 @@ public class UserPageService {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
 
-        List<UserPageResponseDto.PostInfo> postList = getPostInfoList(user);
+        List<Chat> chatList = chatRepository.findAllByUser(id);
+
+        List<UserPageResponseDto.PostInfo> postList = new ArrayList<>();
+
+        for(Chat c : chatList) {
+            Post post = postRepository.findById(c.getPost()).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시글이 없습니다"));
+
+            getPostInfo(postList, post);
+        }
 
         return UserPageResponseDto.OthersPostInfo.of(postList);
     }
