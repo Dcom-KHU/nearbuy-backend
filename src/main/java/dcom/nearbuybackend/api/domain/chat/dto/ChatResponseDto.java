@@ -19,6 +19,7 @@ public class ChatResponseDto {
 
         private String id;
         private Integer room;
+        private Integer post;
         private String sender;
         private List<String> userList;
         private String message;
@@ -29,6 +30,7 @@ public class ChatResponseDto {
             return ChatList.builder()
                     .id(chat.getId())
                     .room(chat.getRoom())
+                    .post(chat.getPost())
                     .sender(chat.getSender())
                     .userList(chat.getUserList())
                     .message(chat.getMessage())

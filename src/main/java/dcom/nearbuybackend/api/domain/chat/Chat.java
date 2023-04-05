@@ -19,6 +19,8 @@ public class Chat {
 
     private Integer room;
 
+    private Integer post;
+
     private String sender;
 
     private List<String> userList;

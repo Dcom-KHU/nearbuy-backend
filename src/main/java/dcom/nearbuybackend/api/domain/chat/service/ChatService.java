@@ -67,6 +67,7 @@ public class ChatService {
 
         Chat chat = Chat.builder()
                 .room(room++)
+                .post(post.getId())
                 .userList(userList)
                 .message("[SYSTEM]" + user.getName() + ", " + post.getWriter().getName() + " 님이 입장하셨습니다.")
                 .time(System.currentTimeMillis())
@@ -83,6 +84,7 @@ public class ChatService {
 
         Chat chat = Chat.builder()
                 .room(room)
+                .post(lastChat.getPost())
                 .sender(user.getName())
                 .userList(lastChat.getUserList())
                 .message(message)
@@ -97,6 +99,7 @@ public class ChatService {
 
         String chatMessage = "{\"id\": \"" + chat.getId() + "\","
                 + "\"room\": \"" + chat.getRoom() +"\","
+                + "\"post\": \"" + chat.getPost() +"\","
                 + "\"sender\": \"" + chat.getSender() +"\","
                 + "\"userList\": \"" + chat.getUserList() +"\","
                 + "\"message\": \"" + chat.getMessage() +"\","
@@ -126,6 +129,7 @@ public class ChatService {
 
         Chat chat = Chat.builder()
                 .room(room)
+                .post(lastChat.getPost())
                 .userList(lastChat.getUserList())
                 .message("[SYSTEM]" + user.getName() + " 님이 퇴장하셨습니다.")
                 .time(System.currentTimeMillis())
