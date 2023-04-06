@@ -15,8 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,7 +77,7 @@ public class ImageService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미지가 비어있습니다.");
         }
 
-        List<String> existingImage = getPostImages(post);
+        List<String> existingImage = post.getImageList();
 
         for (MultipartFile image : images) {
             String path = "post-" + post.getId() + "/" + System.currentTimeMillis() + '-' + System.nanoTime() + getFileExtension(image);
@@ -104,7 +102,7 @@ public class ImageService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "게시물 접근 권한이 없습니다.");
         }
 
-        List<String> existingImage = getPostImages(post);
+        List<String> existingImage = post.getImageList();
 
         index.sort(Collections.reverseOrder());
 
@@ -127,13 +125,6 @@ public class ImageService {
         }
         post.setImage(result);
         postRepository.save(post);
-    }
-
-    private List<String> getPostImages(Post post) {
-        if (post.getImage() == null) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>(Arrays.asList(post.getImage().split(",")));
     }
 
     private String getFileExtension(MultipartFile image) {
