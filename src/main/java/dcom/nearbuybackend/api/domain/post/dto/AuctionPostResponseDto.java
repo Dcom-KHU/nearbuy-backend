@@ -48,7 +48,6 @@ public class AuctionPostResponseDto {
     }
 
     public static AuctionPostInfo of(AuctionPost auctionPost) {
-        List<String> imageList = List.of(auctionPost.getImage().split(","));
         List<String> tagList = List.of(auctionPost.getTag().split(","));
 
         return AuctionPostInfo.builder()
@@ -57,7 +56,7 @@ public class AuctionPostResponseDto {
                 .title(auctionPost.getTitle())
                 .writer(auctionPost.getWriter().getName())
                 .detail(auctionPost.getDetail())
-                .image(imageList)
+                .image(auctionPost.getImageList())
                 .time(auctionPost.getTime())
                 .location(auctionPost.getLocation())
                 .ongoing(auctionPost.getOngoing())

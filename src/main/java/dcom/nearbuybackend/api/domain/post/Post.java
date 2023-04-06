@@ -4,6 +4,9 @@ import dcom.nearbuybackend.api.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Getter
@@ -45,4 +48,17 @@ public class Post {
     @Column
     private String location;
 
+    public List<String> getImageList() {
+        if (image == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(Arrays.asList(image.split(",")));
+    }
+
+    public String getThumbnailImage() {
+        if (image == null) {
+            return null;
+        }
+        return image.split(",")[0];
+    }
 }

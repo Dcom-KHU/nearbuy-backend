@@ -39,7 +39,6 @@ public class ExchangePostResponseDto {
         private String target;
 
         public static ExchangePostInfo of(ExchangePost exchangePost) {
-            List<String> imageList = List.of(exchangePost.getImage().split(","));
             List<String> tagList = List.of(exchangePost.getTag().split(","));
 
             return ExchangePostInfo.builder()
@@ -48,7 +47,7 @@ public class ExchangePostResponseDto {
                     .title(exchangePost.getTitle())
                     .writer(exchangePost.getWriter().getName())
                     .detail(exchangePost.getDetail())
-                    .image(imageList)
+                    .image(exchangePost.getImageList())
                     .time(exchangePost.getTime())
                     .location(exchangePost.getLocation())
                     .ongoing(exchangePost.getOngoing())

@@ -51,8 +51,6 @@ public class GroupPostResponseDto {
         private List<Long> day;
 
         public static GroupPostInfo of(GroupPost groupPost) {
-
-            List<String> imageList = List.of(groupPost.getImage().split(","));
             List<String> tagList = List.of(groupPost.getTag().split(","));
             Stream<String> dayStream = Arrays.stream(groupPost.getDay().split(","));
             List<Long> dayList = dayStream.map(Long::parseLong).collect(Collectors.toList());
@@ -63,7 +61,7 @@ public class GroupPostResponseDto {
                     .title(groupPost.getTitle())
                     .writer(groupPost.getWriter().getName())
                     .detail(groupPost.getDetail())
-                    .image(imageList)
+                    .image(groupPost.getImageList())
                     .time(groupPost.getTime())
                     .location(groupPost.getLocation())
                     .ongoing(groupPost.getOngoing())

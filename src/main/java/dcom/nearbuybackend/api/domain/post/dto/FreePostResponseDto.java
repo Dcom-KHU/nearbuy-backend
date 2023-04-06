@@ -37,8 +37,6 @@ public class FreePostResponseDto {
         private List<String> tag;
 
         public static FreePostInfo of(FreePost freePost) {
-
-            List<String> imageList = List.of(freePost.getImage().split(","));
             List<String> tagList = List.of(freePost.getTag().split(","));
 
             return FreePostInfo.builder()
@@ -47,7 +45,7 @@ public class FreePostResponseDto {
                     .title(freePost.getTitle())
                     .writer(freePost.getWriter().getName())
                     .detail(freePost.getDetail())
-                    .image(imageList)
+                    .image(freePost.getImageList())
                     .time(freePost.getTime())
                     .location(freePost.getLocation())
                     .ongoing(freePost.getOngoing())

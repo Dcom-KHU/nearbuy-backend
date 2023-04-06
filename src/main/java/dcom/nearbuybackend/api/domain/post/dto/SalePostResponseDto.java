@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SalePostResponseDto {
@@ -41,8 +39,7 @@ public class SalePostResponseDto {
         private Integer salePrice;
 
         public static SalePostInfo of(SalePost salePost) {
-            List<String> imageList = new ArrayList(Arrays.asList(salePost.getImage().split(",")));
-            List<String> tagList = new ArrayList(Arrays.asList(salePost.getTag().split(",")));
+            List<String> tagList = List.of(salePost.getTag().split(","));
 
             return SalePostInfo.builder()
                     .id(salePost.getId())
@@ -50,7 +47,7 @@ public class SalePostResponseDto {
                     .title(salePost.getTitle())
                     .writer(salePost.getWriter().getName())
                     .detail(salePost.getDetail())
-                    .image(imageList)
+                    .image(salePost.getImageList())
                     .time(salePost.getTime())
                     .location(salePost.getLocation())
                     .ongoing(salePost.getOngoing())
