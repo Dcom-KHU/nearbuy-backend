@@ -2,6 +2,7 @@ package dcom.nearbuybackend.api.domain.post.service;
 
 import dcom.nearbuybackend.api.domain.post.Post;
 import dcom.nearbuybackend.api.domain.post.ReportPost;
+import dcom.nearbuybackend.api.domain.post.dto.PostResponseDto;
 import dcom.nearbuybackend.api.domain.post.dto.ReportPostRequestDto;
 import dcom.nearbuybackend.api.domain.post.repository.PostRepository;
 import dcom.nearbuybackend.api.domain.post.repository.ReportPostRepository;
@@ -106,5 +107,12 @@ public class PostService {
             return true;
         else
             return false;
+    }
+
+    public PostResponseDto.PostSummary getPostSummary(Integer id) {
+        Post post = postRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
+
+        return PostResponseDto.PostSummary.of(post);
     }
 }

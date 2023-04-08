@@ -1,5 +1,6 @@
 package dcom.nearbuybackend.api.domain.post.controller;
 
+import dcom.nearbuybackend.api.domain.post.dto.PostResponseDto;
 import dcom.nearbuybackend.api.domain.post.service.PostService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +58,14 @@ public class PostController {
     })
     public ResponseEntity<Boolean> validateWriter(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
         return ResponseEntity.ok(postService.validateWriter(httpServletRequest, id));
+    }
+
+    @ApiOperation(value = "게시글 요약 정보 조회", notes = "게시글의 요약 정보를 조회합니다.")
+    @GetMapping("/summary")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
+    })
+    public ResponseEntity<PostResponseDto.PostSummary> getPostSummary(@ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
+        return ResponseEntity.ok(postService.getPostSummary(id));
     }
 }
