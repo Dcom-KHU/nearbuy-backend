@@ -19,13 +19,22 @@ public class UserPageController {
 
     private final UserPageService userPageService;
 
-    @ApiOperation(value = "유저 페이지 - 메인", notes = "입력받은 아이디에 해당하는 유저 페이지를 조회합니다.")
+    @ApiOperation(value = "유저 페이지 - 메인(아이디)", notes = "입력받은 아이디에 해당하는 유저 페이지를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code = 404, message = "해당하는 유저가 없습니다.")
     })
-    @GetMapping("/page")
-    public ResponseEntity<UserPageResponseDto.UserPageInfo> getUserPage(@ApiParam(value = "유저 ID", required = true) @RequestParam String id) {
-        return ResponseEntity.ok(userPageService.getUserPage(id));
+    @GetMapping("/page/id")
+    public ResponseEntity<UserPageResponseDto.UserPageInfo> getUserPageById(@ApiParam(value = "유저 ID", required = true) @RequestParam String id) {
+        return ResponseEntity.ok(userPageService.getUserPageById(id));
+    }
+
+    @ApiOperation(value = "유저 페이지 - 메인(이름)", notes = "입력받은 이름에 해당하는 유저 페이지를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 유저가 없습니다.")
+    })
+    @GetMapping("/page/name")
+    public ResponseEntity<UserPageResponseDto.UserPageInfo> getUserPageByName(@ApiParam(value = "유저 이름", required = true) @RequestParam String name) {
+        return ResponseEntity.ok(userPageService.getUserPageByName(name));
     }
 
     @ApiOperation(value = "유저 페이지 - 수정", notes = "[인증 필요]입력받은 아이디에 해당하는 유저 페이지를 수정합니다.")

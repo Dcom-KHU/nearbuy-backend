@@ -45,8 +45,15 @@ public class UserPageService {
     private final TokenService tokenService;
 
     // 유저 페이지 조회
-    public UserPageResponseDto.UserPageInfo getUserPage(String id) {
+    public UserPageResponseDto.UserPageInfo getUserPageById(String id) {
         User user = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
+
+        return UserPageResponseDto.UserPageInfo.of(user);
+    }
+
+    public UserPageResponseDto.UserPageInfo getUserPageByName(String name) {
+        User user = userRepository.findByName(name).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
 
         return UserPageResponseDto.UserPageInfo.of(user);
