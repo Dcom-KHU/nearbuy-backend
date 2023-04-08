@@ -46,7 +46,7 @@ public class ChatService {
 
         List<Chat> chatRoomList = chatRepository.findAllByUser(user.getName());
 
-        return ChatResponseDto.ChatRoomList.of(chatRoomList);
+        return ChatResponseDto.ChatRoomList.of(chatRoomList, user);
     }
 
     public void getChatRoomListSocket(WebSocketSession session, String accessToken) {
@@ -61,14 +61,19 @@ public class ChatService {
         Post post = postRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다."));
 
-        List<String> userList = new ArrayList<>();
-        userList.add(user.getName());
-        userList.add(post.getWriter().getName());
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add(user.getId());
+        userIdList.add(post.getWriter().getId());
+
+        List<String> userNameList = new ArrayList<>();
+        userNameList.add(user.getName());
+        userNameList.add(post.getWriter().getName());
 
         Chat chat = Chat.builder()
                 .room(room++)
                 .post(post.getId())
-                .userList(userList)
+                .userIdList(userIdList)
+                .userNameList(userNameList)
                 .message("[SYSTEM]" + user.getName() + ", " + post.getWriter().getName() + " 님이 입장하셨습니다.")
                 .time(System.currentTimeMillis())
                 .last(true)
@@ -86,7 +91,8 @@ public class ChatService {
                 .room(room)
                 .post(lastChat.getPost())
                 .sender(user.getName())
-                .userList(lastChat.getUserList())
+                .userIdList(lastChat.getUserIdList())
+                .userNameList(lastChat.getUserNameList())
                 .message(message)
                 .time(System.currentTimeMillis())
                 .last(true)
@@ -101,12 +107,13 @@ public class ChatService {
                 + "\"room\": \"" + chat.getRoom() +"\","
                 + "\"post\": \"" + chat.getPost() +"\","
                 + "\"sender\": \"" + chat.getSender() +"\","
-                + "\"userList\": \"" + chat.getUserList() +"\","
+                + "\"userIdList\": \"" + chat.getUserIdList() +"\","
+                + "\"userNameList\": \"" + chat.getUserNameList() +"\","
                 + "\"message\": \"" + chat.getMessage() +"\","
                 + "\"time\": \"" + chat.getTime() +"\","
                 + "\"last\": \"" + chat.getLast() +"\"}";
 
-        for(String receiver : lastChat.getUserList()) {
+        for(String receiver : lastChat.getUserNameList()) {
             if(userSession.containsKey(receiver))
                 userSession.get(receiver).sendMessage(new TextMessage(chatMessage));
         }
@@ -118,9 +125,9 @@ public class ChatService {
         List<Chat> chatList = chatRepository.findAllByRoomAndUser(room, user.getName());
 
         for(Chat c : chatList){
-            List<String> userList = c.getUserList();
-            userList.remove(user.getName());
-            c.setUserList(userList);
+            List<String> userNameList = c.getUserNameList();
+            userNameList.remove(user.getName());
+            c.setUserNameList(userNameList);
         }
 
         chatRepository.saveAll(chatList);
@@ -130,7 +137,8 @@ public class ChatService {
         Chat chat = Chat.builder()
                 .room(room)
                 .post(lastChat.getPost())
-                .userList(lastChat.getUserList())
+                .userIdList(lastChat.getUserIdList())
+                .userNameList(lastChat.getUserNameList())
                 .message("[SYSTEM]" + user.getName() + " 님이 퇴장하셨습니다.")
                 .time(System.currentTimeMillis())
                 .last(true)

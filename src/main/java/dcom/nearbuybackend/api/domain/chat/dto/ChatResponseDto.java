@@ -1,9 +1,11 @@
 package dcom.nearbuybackend.api.domain.chat.dto;
 
 import dcom.nearbuybackend.api.domain.chat.Chat;
+import dcom.nearbuybackend.api.domain.user.User;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,8 @@ public class ChatResponseDto {
         private Integer room;
         private Integer post;
         private String sender;
-        private List<String> userList;
+        private List<String> userIdList;
+        private List<String> userNameList;
         private String message;
         private Long time;
         private Boolean last;
@@ -32,7 +35,8 @@ public class ChatResponseDto {
                     .room(chat.getRoom())
                     .post(chat.getPost())
                     .sender(chat.getSender())
-                    .userList(chat.getUserList())
+                    .userIdList(chat.getUserIdList())
+                    .userNameList(chat.getUserNameList())
                     .message(chat.getMessage())
                     .time(chat.getTime())
                     .last(chat.getLast())
@@ -54,22 +58,46 @@ public class ChatResponseDto {
 
         private String id;
         private Integer room;
+        private Integer post;
         private String sender;
+        private List<String> userIdList;
+        private List<String> userNameList;
         private String message;
         private Long time;
 
-        public static ChatRoomList of(Chat chat) {
+        public static ChatRoomList of(Chat chat, User user) {
+            List<String> otherUserIdList = new ArrayList<>();
+            List<String> otherUserNameList = new ArrayList<>();
+
+            for(String s : chat.getUserIdList()) {
+                if(!s.equals(user.getId()))
+                    otherUserIdList.add(s);
+            }
+            for(String s : chat.getUserNameList()) {
+                if(!s.equals(user.getName()))
+                    otherUserNameList.add(s);
+            }
+
             return ChatRoomList.builder()
                     .id(chat.getId())
                     .room(chat.getRoom())
+                    .post(chat.getPost())
                     .sender(chat.getSender())
+                    .userIdList(otherUserIdList)
+                    .userNameList(otherUserNameList)
                     .message(chat.getMessage())
                     .time(chat.getTime())
                     .build();
         }
 
-        public static List<ChatRoomList> of(List<Chat> chatRoomList) {
-            return chatRoomList.stream().map(ChatRoomList::of).collect(Collectors.toList());
+        public static List<ChatRoomList> of(List<Chat> chatList, User user) {
+            List<ChatRoomList> chatRoomList = new ArrayList<>();
+
+            for(Chat c : chatList) {
+                chatRoomList.add(of(c, user));
+            }
+
+            return chatRoomList;
         }
     }
 }

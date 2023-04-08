@@ -158,13 +158,18 @@ public class AuctionPostService {
         User user2 = userRepository.findByName(name).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다"));
 
-        List<String> userList = new ArrayList<>();
-        userList.add(user1.getName());
-        userList.add(user2.getName());
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add(user1.getId());
+        userIdList.add(user2.getId());
+
+        List<String> userNameList = new ArrayList<>();
+        userNameList.add(user1.getName());
+        userNameList.add(user2.getName());
 
         Chat chat = Chat.builder()
                 .room(room++)
-                .userList(userList)
+                .userIdList(userIdList)
+                .userNameList(userNameList)
                 .message("[SYSTEM]" + user1.getName() + ", " + user2.getName() + " 님이 입장하셨습니다.")
                 .time(System.currentTimeMillis())
                 .last(true)

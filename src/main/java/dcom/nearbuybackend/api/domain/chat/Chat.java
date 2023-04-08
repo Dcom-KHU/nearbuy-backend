@@ -23,7 +23,9 @@ public class Chat {
 
     private String sender;
 
-    private List<String> userList;
+    private List<String> userIdList;
+
+    private List<String> userNameList;
 
     private String message;
 

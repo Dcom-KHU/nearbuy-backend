@@ -201,21 +201,26 @@ public class GroupPostService {
         if(!user.equals(groupPost.getWriter()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"경매 참여자 낙찰 접근 권한이 없습니다.");
 
-        List<String> userList = new ArrayList<>();
-        userList.add(user.getName());
+        List<String> userIdList = new ArrayList<>();
+        userIdList.add(user.getId());
+
+        List<String> userNameList = new ArrayList<>();
+        userNameList.add(user.getName());
 
         List<GroupPostPeople> groupPostPeopleList = groupPostPeopleRepository.findByPost(groupPost);
 
         for(GroupPostPeople g : groupPostPeopleList) {
             if(g.getParticipate().equals(true)) {
-                userList.add(g.getUser().getName());
+                userIdList.add(g.getUser().getId());
+                userNameList.add(g.getUser().getName());
             }
         }
 
         Chat chat = Chat.builder()
                 .room(room++)
-                .userList(userList)
-                .message("[SYSTEM]" + userList.toString() + " 님이 입장하셨습니다.")
+                .userNameList(userIdList)
+                .userNameList(userNameList)
+                .message("[SYSTEM]" + userNameList.toString() + " 님이 입장하셨습니다.")
                 .time(System.currentTimeMillis())
                 .last(true)
                 .build();
