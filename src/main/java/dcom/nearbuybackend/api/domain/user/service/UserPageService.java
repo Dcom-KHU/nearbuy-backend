@@ -88,8 +88,17 @@ public class UserPageService {
     }
 
     // 내가 게시한 글 조회
-    public UserPageResponseDto.MyPostInfo getMyPost(String id) {
+    public UserPageResponseDto.MyPostInfo getMyPostById(String id) {
         User user = userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
+
+        List<UserPageResponseDto.PostInfo> postList = getPostInfoList(user);
+
+        return UserPageResponseDto.MyPostInfo.of(postList);
+    }
+
+    public UserPageResponseDto.MyPostInfo getMyPostByName(String name) {
+        User user = userRepository.findByName(name).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."));
 
         List<UserPageResponseDto.PostInfo> postList = getPostInfoList(user);

@@ -52,13 +52,22 @@ public class UserPageController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ApiOperation(value = "유저 페이지 - 내가 게시한 글", notes = "입력받은 아이디에 해당하는 유저의 자신이 게시한 글을 조회합니다.")
+    @ApiOperation(value = "유저 페이지 - 내가 게시한 글(아이디)", notes = "입력받은 아이디에 해당하는 유저의 자신이 게시한 글을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code = 404, message = "해당하는 유저가 없습니다.")
     })
-    @GetMapping("/page/my")
-    public ResponseEntity<UserPageResponseDto.MyPostInfo> getMyPost(@ApiParam(value = "유저 ID", required = true) @RequestParam String id) {
-        return ResponseEntity.ok(userPageService.getMyPost(id));
+    @GetMapping("/page/my/id")
+    public ResponseEntity<UserPageResponseDto.MyPostInfo> getMyPostById(@ApiParam(value = "유저 ID", required = true) @RequestParam String id) {
+        return ResponseEntity.ok(userPageService.getMyPostById(id));
+    }
+
+    @ApiOperation(value = "유저 페이지 - 내가 게시한 글(이름)", notes = "입력받은 이름에 해당하는 유저의 자신이 게시한 글을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "해당하는 유저가 없습니다.")
+    })
+    @GetMapping("/page/my/name")
+    public ResponseEntity<UserPageResponseDto.MyPostInfo> getMyPostByName(@ApiParam(value = "유저 이름", required = true) @RequestParam String name) {
+        return ResponseEntity.ok(userPageService.getMyPostByName(name));
     }
 
     @ApiOperation(value = "유저 페이지 - 남이 게시한 글", notes = "입력받은 아이디에 해당하는 유저이 참여한 남의 게시글을 조회합니다.")
