@@ -121,14 +121,18 @@ public class AuctionPostService {
 
 
     // 경매 게시글 참여
-    public void joinAuctionPost(HttpServletRequest httpServletRequest, Integer id) {
+    public void joinAuctionPost(HttpServletRequest httpServletRequest, Integer id, Integer newBid) {
         AuctionPost auctionPost = auctionPostRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다"));
 
         User user = tokenService.getUserByToken(tokenService.resolveToken(httpServletRequest));
 
-        Integer newAuctionPrice = auctionPost.getCurrentPrice() + auctionPost.getIncreasePrice();
-        increaseCurrentPrice(id, newAuctionPrice);
+        Integer newAuctionPrice = auctionPost.getCurrentPrice() + newBid;
+        if (newAuctionPrice <= auctionPost.getCurrentPrice()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "경매 호가는 기존 가격보다 높아야 합니다");
+        }
+        auctionPost.setCurrentPrice(newAuctionPrice);
+        auctionPostRepository.save(auctionPost);
 
         AuctionPostPeople auctionPostPeople = new AuctionPostPeople();
         auctionPostPeople.setId(id);
@@ -136,14 +140,6 @@ public class AuctionPostService {
         auctionPostPeople.setUser(user);
         auctionPostPeople.setAuctionPrice(newAuctionPrice);
         auctionPostPeopleRepository.save(auctionPostPeople);
-    }
-
-    private void increaseCurrentPrice(Integer id, Integer newAuctionPrice) {
-        AuctionPost auctionPost = auctionPostRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다"));
-
-        auctionPost.setCurrentPrice(newAuctionPrice);
-        auctionPostRepository.save(auctionPost);
     }
 
     public void finishAuctionPost(HttpServletRequest httpServletRequest, Integer id, String name) {
