@@ -66,8 +66,9 @@ public class AuctionPostController {
             @ApiResponse(code = 404, message = "해당하는 게시글이 없습니다.")
     })
     @PostMapping("/participate")
-    public ResponseEntity<Void> joinAuctionPost(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id) {
-        auctionPostService.joinAuctionPost(httpServletRequest, id);
+    public ResponseEntity<Void> joinAuctionPost(HttpServletRequest httpServletRequest, @ApiParam(value = "게시글 ID", required = true) @RequestParam Integer id,
+                                                @ApiParam(value = "경매 참여 호가", required = true) @RequestParam Integer newBid) {
+        auctionPostService.joinAuctionPost(httpServletRequest, id, newBid);
 
         return ResponseEntity.ok().build();
     }
