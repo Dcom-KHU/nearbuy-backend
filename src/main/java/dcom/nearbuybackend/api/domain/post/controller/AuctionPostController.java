@@ -79,5 +79,11 @@ public class AuctionPostController {
         auctionPostService.finishAuctionPost(httpServletRequest, id, name);
         return ResponseEntity.ok().build();
     }
+
+    @ApiOperation("경매 게시글 낙찰자 조회")
+    @GetMapping("/winner")
+    public ResponseEntity<AuctionPostResponseDto.AuctionPeopleInfo> getAuctionWinner(@RequestParam Integer id) {
+        return ResponseEntity.ok(auctionPostService.getAuctionWinner(id));
+    }
 }
 

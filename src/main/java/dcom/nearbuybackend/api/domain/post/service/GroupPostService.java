@@ -218,6 +218,7 @@ public class GroupPostService {
 
         Chat chat = Chat.builder()
                 .room(room++)
+                .post(id)
                 .userNameList(userIdList)
                 .userNameList(userNameList)
                 .message("[SYSTEM]" + userNameList.toString() + " 님이 입장하셨습니다.")

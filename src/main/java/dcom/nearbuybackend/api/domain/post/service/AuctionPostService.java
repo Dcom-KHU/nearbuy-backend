@@ -164,6 +164,7 @@ public class AuctionPostService {
 
         Chat chat = Chat.builder()
                 .room(room++)
+                .post(id)
                 .userIdList(userIdList)
                 .userNameList(userNameList)
                 .message("[SYSTEM]" + user1.getName() + ", " + user2.getName() + " 님이 입장하셨습니다.")
@@ -172,5 +173,23 @@ public class AuctionPostService {
                 .build();
 
         chatRepository.save(chat);
+    }
+
+    public AuctionPostResponseDto.AuctionPeopleInfo getAuctionWinner(Integer id) {
+
+        AuctionPost auctionPost = auctionPostRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 게시물이 없습니다"));
+
+        Chat chat = chatRepository.findFirstByPostOrderByTimeDesc(auctionPost.getId()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.FORBIDDEN, "해당하는 게시물은 아직 낙찰되지 않았습니다."));
+
+        String userId="";
+
+        for(String s : chat.getUserIdList()) {
+            if(!s.equals(auctionPost.getWriter().getId()))
+                userId = userId + s;
+        }
+
+        return AuctionPostResponseDto.AuctionPeopleInfo.of(auctionPostPeopleRepository.findByPostIdAndUserId(id,userId));
     }
 }
