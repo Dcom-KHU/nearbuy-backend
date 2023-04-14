@@ -34,7 +34,9 @@ cd ./nearbuy-backend
 
 docker-compose up -d
 
-[Write down "spring.mail.password" in /src/main/resources/application.yml]
+keytool -genkey -alias nearbuy -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12
+
+[Write down "spring.mail.password", "server.ssl.key-store-password" in /src/main/resources/application.yml]
 
 [Write down "spring.datasource.password", "spring.data.mongodb.password" in /src/main/resources/application-db.yml] 
 

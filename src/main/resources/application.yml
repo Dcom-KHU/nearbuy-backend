@@ -34,3 +34,9 @@ server:
   error:
     include-message: always
     include-stacktrace: never
+  ssl:
+    enabled: true
+    key-alias: nearbuy
+    key-store-type: PKCS12
+    key-store: keystore.p12
+    key-store-password:
