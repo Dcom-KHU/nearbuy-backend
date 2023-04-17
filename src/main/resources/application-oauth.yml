@@ -1,6 +1,8 @@
 spring:
-  # Security OAuth
   security:
+    require-ssl: true
+    
+    # Security OAuth
     oauth2.client:
       registration:
         kakao:

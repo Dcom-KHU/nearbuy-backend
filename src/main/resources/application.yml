@@ -40,3 +40,4 @@ server:
     key-store-type: PKCS12
     key-store: keystore.p12
     key-store-password:
+  port: 8443
