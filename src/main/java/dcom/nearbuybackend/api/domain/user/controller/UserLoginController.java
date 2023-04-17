@@ -76,7 +76,7 @@ public class UserLoginController {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", token.getRefreshToken())
                 .maxAge(30 * 24 * 60 * 60) // 만료 기한
                 .path("/")
-//                .secure(true) // HTTPS 적용 후 사용할 것
+                .secure(true)
                 .httpOnly(true)
                 .build();
 

@@ -24,9 +24,27 @@ export PATH=$PATH:$JAVA_HOME/bin
 source ~/.bashrc
 ```
 
+```
+sudo apt install certbot
+
+sudo certbot certonly --standalone
+
+sudo chmod 755 /etc/letsencrypt/live
+
+cd /etc/letsencrypt/live/{DOMAIN_URL}
+
+sudo openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem -out keystore.p12 -name nearbuy -CAfile chain.pem -caname root
+
+sudo mv keystore.p12 ~/
+
+cd ~
+```
+
 ## 실행
 ```
 git clone https://github.com/Dcom-KHU/nearbuy-backend.git
+
+sudo mv keystore.p12 ./nearbuy-backend
 
 cd ./nearbuy-backend
 
@@ -34,15 +52,13 @@ cd ./nearbuy-backend
 
 docker-compose up -d
 
-keytool -genkey -alias nearbuy -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12
-
 [Write down "spring.mail.password", "server.ssl.key-store-password" in /src/main/resources/application.yml]
 
 [Write down "spring.datasource.password", "spring.data.mongodb.password" in /src/main/resources/application-db.yml] 
 
 [Write down {NAVER CLIENT_ID + SECRET} / {KAKAO CLIENT_ID + SECRET} / {JWT SECRET KEY} in /src/main/resources/application-oauth.yml] 
 
-sudo chmod 777 ./gradlew
+sudo chmod 755 ./gradlew
 
 ./gradlew build
 
