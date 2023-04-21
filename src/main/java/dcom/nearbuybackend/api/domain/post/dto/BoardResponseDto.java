@@ -25,12 +25,15 @@ public class BoardResponseDto {
         private Integer size;
         @ApiModelProperty(value = "게시글 리스트")
         private List<BoardPostInfo> post;
+        @ApiModelProperty(value = "총 게시글 개수")
+        private Integer total;
 
         public static BoardInfo of(Pageable pageable, List<BoardPostInfo> boardPostInfos) {
             return BoardInfo.builder()
                     .page(pageable.getPageNumber())
                     .size(pageable.getPageSize())
                     .post(boardPostInfos)
+                    .total(boardPostInfos.size())
                     .build();
         }
     }
