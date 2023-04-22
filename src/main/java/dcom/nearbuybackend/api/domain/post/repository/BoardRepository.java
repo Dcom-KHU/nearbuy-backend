@@ -13,6 +13,11 @@ public interface BoardRepository extends JpaRepository<Post, Integer>   {
     // type 상관 없이 모든 게시글 조회
     Page<Post> findAll(Pageable pageable);
 
+    List<Post> findAllPost();
+
+    @Query("select p from Post p where p.type = :type")
+    List<Post> findAllPostByType(String type);
+
     // type별 게시글 조회
     @Query("select p from Post p where p.type = :type")
     List<Post> findAllByType(String type, Pageable pageable);

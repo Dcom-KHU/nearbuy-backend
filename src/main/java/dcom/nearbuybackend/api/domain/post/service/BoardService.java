@@ -29,6 +29,13 @@ public class BoardService {
     public BoardResponseDto.BoardInfo getBoard(String type, Pageable pageable) {
         List<BoardResponseDto.BoardPostInfo> boardPostInfos = new ArrayList<>();
 
+        Integer total;
+
+        if(type.equals("all"))
+            total = boardRepository.findAllPost().size();
+        else
+            total = boardRepository.findAllPostByType(type).size();
+
         if(type.equals("all")){
             Page<Post> posts = boardRepository.findAll(pageable);
 
@@ -74,12 +81,19 @@ public class BoardService {
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"게시글 type을 잘못 입력하셨습니다.");
 
-        return BoardResponseDto.BoardInfo.of(pageable, boardPostInfos);
+        return BoardResponseDto.BoardInfo.of(pageable, boardPostInfos, total);
     }
 
     // 게시판 검색
     public BoardResponseDto.BoardInfo searchBoard(String type, String search, Pageable pageable) {
         List<BoardResponseDto.BoardPostInfo> boardPostInfos = new ArrayList<>();
+
+        Integer total;
+
+        if(type.equals("all"))
+            total = boardRepository.findAllPost().size();
+        else
+            total = boardRepository.findAllPostByType(type).size();
 
         if(type.equals("all")){
             List<Post> posts = boardRepository.findAllBySearch(search, pageable);
@@ -126,6 +140,6 @@ public class BoardService {
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"게시글 type을 잘못 입력하셨습니다.");
 
-        return BoardResponseDto.BoardInfo.of(pageable, boardPostInfos);
+        return BoardResponseDto.BoardInfo.of(pageable, boardPostInfos, total);
     }
 }
