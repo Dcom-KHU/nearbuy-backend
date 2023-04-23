@@ -11,8 +11,10 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Post, Integer>   {
 
     // type 상관 없이 모든 게시글 조회
+
     Page<Post> findAll(Pageable pageable);
 
+    @Query("select p from Post p")
     List<Post> findAllPost();
 
     @Query("select p from Post p where p.type = :type")
