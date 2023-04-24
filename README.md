@@ -60,6 +60,8 @@ docker-compose up -d
 
 sudo chmod 755 ./gradlew
 
+sudo chmod 755 ./keystore.p12
+
 ./gradlew build
 
 java -jar build/libs/nearbuy-backend-0.0.1-SNAPSHOT.jar
